@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Velocity Recorder</string>
+    <string name="title_home">Dashboard</string>
+    <string name="title_history">History</string>
+</resources>
