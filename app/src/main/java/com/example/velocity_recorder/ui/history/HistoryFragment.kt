@@ -1,42 +1,52 @@
 package com.example.velocity_recorder.ui.history
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.example.velocity_recorder.databinding.FragmentHistoryBinding
+import com.example.velocity_recorder.db.AppDatabase
 
 class HistoryFragment : Fragment() {
 
-    private var _binding: FragmentHistoryBinding? = null
+    private val dataDao by lazy { AppDatabase.getDatabase(requireContext()).dataDao() }
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private val viewModel: HistoryViewModel by viewModels {
+        HistoryViewModel.Factory(dataDao)
+    }
+
+    private lateinit var adapter: HistoryAdapter
+    private lateinit var viewBinding: FragmentHistoryBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val historyViewModel =
-            ViewModelProvider(this).get(HistoryViewModel::class.java)
-
-        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textHistory
-        historyViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        viewBinding = FragmentHistoryBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        adapter = HistoryAdapter(::itemClick, ::deleteRide)
+        viewBinding.recyclerHistory.adapter = adapter
+
+        viewModel.getRides().observe(viewLifecycleOwner) {
+            Log.d("MyLog", "observer called")
+            adapter.updateData(it)
+        }
+    }
+
+    private fun deleteRide(rideId: Long) {
+        viewModel.deleteRide(rideId)
+    }
+
+    private fun itemClick(rideId: Long) {
+        Log.d("MyLog", "item ${rideId} clicked")
     }
 }

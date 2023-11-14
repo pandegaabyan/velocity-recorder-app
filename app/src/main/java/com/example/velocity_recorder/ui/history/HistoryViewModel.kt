@@ -1,13 +1,47 @@
 package com.example.velocity_recorder.ui.history
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
+import com.example.velocity_recorder.db.DataDao
+import com.example.velocity_recorder.ui_model.RideItemData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class HistoryViewModel : ViewModel() {
+class HistoryViewModel(
+    private val dataDao: DataDao
+) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is history Fragment"
+    @Synchronized
+    fun getRides(): LiveData<List<RideItemData>> {
+        return dataDao.getRides().map { rideList ->
+            rideList.map {
+                RideItemData(
+                    rideId = it.id ?: 0,
+                    startLocality = it.startLocality,
+                    endLocality = it.endLocality,
+                    avgVelocity = it.avgVelocity,
+                    distance = it.distance,
+                    startTime = it.startTime,
+                    endTime = it.endTime
+                )
+            }
+        }
+
     }
-    val text: LiveData<String> = _text
+
+    fun deleteRide(rideId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataDao.deleteRide(rideId)
+        }
+    }
+
+    class Factory(private val dataDao: DataDao) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return HistoryViewModel(dataDao) as T
+        }
+    }
 }
