@@ -35,9 +35,7 @@ class LocationProvider(
 
     @SuppressLint("MissingPermission")
     fun subscribe() {
-        Log.d("MyLog", "start subscribe location")
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-        Log.d("MyLog", "location subscribed")
     }
 
     fun unsubscribe() {

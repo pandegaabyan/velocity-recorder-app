@@ -69,25 +69,20 @@ object LocationPermissionUtils {
             val result = LocationServices.getSettingsClient(activity)
                 .checkLocationSettings(builder.build())
 
-            Log.d("MyLog", "LocReq: try add listener")
 
             result.addOnCompleteListener { task ->
-                Log.d("MyLog", "LocReq: init listener")
                 try {
                     val response = task.getResult(ApiException::class.java)
-                    Log.d("MyLog", "LocReq: response ${response?.locationSettingsStates?.isLocationUsable ?: false}")
                     locEnableCallBack.invoke(
                         response?.locationSettingsStates?.isLocationUsable ?: false
                     )
                 } catch (exception: ApiException) {
-                    Log.d("MyLog", "LocReqErr: ${exception.toString()}")
                     if (exception.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
                         try {
                             val resolvable = exception as ResolvableApiException?
                             resolvable?.startResolutionForResult(activity, 21)
                         } catch (e: IntentSender.SendIntentException) {
                             // Ignore the error.
-                            Log.d("MyLog", "LocReqErr: ${e.toString()}")
                         }
                     } else if (exception.statusCode == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
                         openDialogForEnableLocation(activity)

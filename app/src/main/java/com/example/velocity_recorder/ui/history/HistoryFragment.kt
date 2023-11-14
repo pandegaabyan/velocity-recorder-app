@@ -37,7 +37,6 @@ class HistoryFragment : Fragment() {
         viewBinding.recyclerHistory.adapter = adapter
 
         viewModel.getRides().observe(viewLifecycleOwner) {
-            Log.d("MyLog", "observer called")
             adapter.updateData(it)
         }
     }

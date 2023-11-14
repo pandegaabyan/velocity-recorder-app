@@ -52,7 +52,6 @@ class PermissionCheckActivity : AppCompatActivity() {
     }
 
     private fun locationEnabled(status: Boolean) {
-        Log.d("MyLog", "Loc: $status")
         if (status) {
             checkAndProceed()
         } else {
@@ -68,7 +67,6 @@ class PermissionCheckActivity : AppCompatActivity() {
     private fun checkAndProceed() {
         if (LocationPermissionUtils.isBasicPermissionGranted(this) &&
             LocationPermissionUtils.isLocationEnabled(this)) {
-            Log.d("MyLog", "checkAndProceed")
             proceed()
         }
     }
@@ -76,12 +74,10 @@ class PermissionCheckActivity : AppCompatActivity() {
     private fun proceed() {
         LocationPermissionUtils.compute(this)
         setResult(RESULT_OK)
-        Log.d("MyLog", "proceed")
         finish()
     }
 
     private fun cancel() {
-        Log.d("MyLog", "cancel")
         finish()
     }
 
