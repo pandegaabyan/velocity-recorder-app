@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.util.Log
 import com.example.velocity_recorder.R
 import com.example.velocity_recorder.databinding.FragmentHomeBinding
 import com.example.velocity_recorder.utils.ClockUtils
@@ -16,7 +15,6 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.gms.maps.model.LatLng
 import java.util.ArrayList
-import java.util.Locale
 
 class LocationProvider(
     private val binding: FragmentHomeBinding,
@@ -28,7 +26,7 @@ class LocationProvider(
     private var sumVelocity: Double = 0.0 // Total velocity
     private var countVelocity = 0 // Number of velocities (i.e. number of velocity measurements)
     private val velocityData = ArrayList<Entry>() // Velocity data for the line curve
-    private var firstCount = false
+    private var firstChange = true
     private var startTime: Long = 0
     private var startLatitude: Double = 0.0
     private var startLongitude: Double = 0.0
@@ -46,8 +44,8 @@ class LocationProvider(
         val velocity = location.speed.toDouble()
         binding.velocityValue.text = ConversionUtils.getVelocityKmHr(velocity)
 
-        if(!firstCount) {
-            firstCount = true
+        if(firstChange) {
+            firstChange = false
             startTime = System.currentTimeMillis()
             startLatitude = location.latitude
             startLongitude = location.longitude
