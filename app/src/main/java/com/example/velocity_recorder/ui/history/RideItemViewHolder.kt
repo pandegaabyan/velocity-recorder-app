@@ -18,7 +18,7 @@ class RideItemViewHolder(
 
         viewBinding.tagText.text = rideItemData.getStartEndText()
         viewBinding.timeText.text = rideItemData.getTimeText()
-        viewBinding.avgVelocityText.text = rideItemData.getAvgVelocity()
+        viewBinding.maxVelocityText.text = rideItemData.getMaxVelocity()
         viewBinding.totalTimeText.text = rideItemData.getTotalTime()
         viewBinding.distanceText.text = rideItemData.getTotalDistance()
 

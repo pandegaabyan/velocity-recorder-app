@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 private const val UPDATE_RIDE_INTERVAL_MILLIS = 30000
 
@@ -44,7 +45,6 @@ class LocationProvider(
     private var currentTime: Long = 0
     private var currentVelocity: Double = 0.0
     private var maxVelocity: Double = 0.0 // Maximum velocity
-    private var avgVelocity: Double = 0.0
 
     private val velocityListData = VelocitySimpleListData(mutableListOf<VelocitySimpleItemData>())
     private val velocityEntries = ArrayList<Entry>() // Velocity data for the line curve
@@ -89,7 +89,8 @@ class LocationProvider(
 
         // Update elapsed time
         val elapsedTime = (currentTime - startTime)
-        binding.timeValue.text = ClockUtils.getTime(elapsedTime / 1000)
+        val elapsedTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
+        binding.timeValue.text = ClockUtils.getTime(elapsedTimeSeconds)
 
         // Update the max. velocity
         if (currentVelocity > maxVelocity) {
@@ -99,7 +100,7 @@ class LocationProvider(
         }
 
         // Update the avg. velocity
-        avgVelocity = distance / (elapsedTime / 1000)
+        val avgVelocity = distance / elapsedTimeSeconds
         binding.avgVelocityValue.text = ConversionUtils.getVelocityKmHr(avgVelocity)
 
         // Add and update data if conditions are satisfied
@@ -142,7 +143,6 @@ class LocationProvider(
                 endTime = currentTime,
                 distance = 0,
                 maxVelocity = currentVelocity,
-                avgVelocity = currentVelocity
             )
         )
         Log.d("AppLog", "success add data with id $rideIdNew")
@@ -164,7 +164,6 @@ class LocationProvider(
             currentTime,
             distance.toInt(),
             maxVelocity,
-            avgVelocity
         )
         dataDao.addVelocities(velocityListData.getVelocityEntities(rideIdNotNull))
         velocityListData.clear()

@@ -13,7 +13,6 @@ data class RideEntity(
     @ColumnInfo(name = "end_time") val endTime: Long,
     @ColumnInfo(name = "distance") val distance: Int,
     @ColumnInfo(name = "max_velocity") val maxVelocity: Double,
-    @ColumnInfo(name = "avg_velocity") val avgVelocity: Double,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis()
 )
 

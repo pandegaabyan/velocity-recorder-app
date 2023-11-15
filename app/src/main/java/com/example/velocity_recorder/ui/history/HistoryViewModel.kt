@@ -22,7 +22,7 @@ class HistoryViewModel(
                     rideId = it.id ?: 0,
                     startLocality = it.startLocality,
                     endLocality = it.endLocality,
-                    avgVelocity = it.avgVelocity,
+                    maxVelocity = it.maxVelocity,
                     distance = it.distance,
                     startTime = it.startTime,
                     endTime = it.endTime

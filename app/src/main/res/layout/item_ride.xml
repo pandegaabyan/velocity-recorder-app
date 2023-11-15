@@ -147,10 +147,10 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:src="@drawable/ic_baseline_speedometer_medium_24" />
+                    android:src="@drawable/ic_baseline_speedometer_fast_24" />
 
                 <TextView
-                    android:id="@+id/avg_velocity_text"
+                    android:id="@+id/max_velocity_text"
                     style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
