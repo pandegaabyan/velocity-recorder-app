@@ -46,6 +46,6 @@ class HistoryFragment : Fragment() {
     }
 
     private fun itemClick(rideId: Long) {
-        Log.d("MyLog", "item ${rideId} clicked")
+        Log.d("AppLog", "item ${rideId} clicked")
     }
 }

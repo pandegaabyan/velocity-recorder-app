@@ -2,11 +2,11 @@ package com.example.velocity_recorder.utils
 
 import java.util.Locale
 
-private const val KM_MULT = 3.6
-private const val SECONDS_HOUR_MULT = 0.000277778
-private const val METER_KM = 0.001
-
 object ConversionUtils {
+
+    private const val KM_MULT = 3.6
+    private const val SECONDS_HOUR_MULT = 0.000277778
+    private const val METER_KM = 0.001
 
     fun getDistanceKm(meter: Double): String {
         return roundDouble(convertMeterToKm(meter)) + " km"
