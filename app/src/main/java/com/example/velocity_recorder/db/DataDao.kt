@@ -10,12 +10,25 @@ import androidx.room.Update
 
 @Dao
 interface DataDao {
-    @Insert
-    fun addRide(ride: RideEntity)
+    // rides table
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addRide(ride: RideEntity): Long
 
     @Query("SELECT * FROM rides ORDER BY created_at DESC")
     fun getRides(): LiveData<List<RideEntity>>
 
+    @Query("UPDATE rides SET end_time = :endTime, distance = :distance, max_velocity = :maxVelocity, avg_velocity = :avgVelocity WHERE id = :id")
+    suspend fun updateRide(id: Long, endTime: Long, distance: Int, maxVelocity: Double, avgVelocity: Double)
+
     @Query("DELETE FROM rides WHERE id = :id")
     suspend fun deleteRide(id: Long)
+
+    // velocities table
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addVelocities(velocities: List<VelocityEntity>)
+
+    @Query("DELETE FROM velocities WHERE ride_id = :rideId")
+    suspend fun deleteVelocities(rideId: Long)
 }
