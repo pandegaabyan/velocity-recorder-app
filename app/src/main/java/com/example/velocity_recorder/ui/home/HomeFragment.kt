@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.velocity_recorder.databinding.FragmentHomeBinding
+import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.ui.permission.PermissionCheckActivity
 import com.example.velocity_recorder.utils.DialogUtils
 import com.example.velocity_recorder.utils.LocationPermissionUtils
@@ -24,6 +25,8 @@ class HomeFragment : Fragment() {
     private lateinit var locationManager: LocationManager
     private lateinit var locationProvider: LocationProvider
     private lateinit var lineChart: LineChart
+
+    private val dataDao by lazy { AppDatabase.getDatabase(requireContext()).dataDao() }
 
     private val permissionActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -52,7 +55,7 @@ class HomeFragment : Fragment() {
         lineChartView.setupChart()
 
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationProvider = LocationProvider(viewBinding, locationManager, lineChart)
+        locationProvider = LocationProvider(viewBinding, locationManager, lineChart, dataDao)
 
         viewBinding.startBtn.setOnClickListener {
             if (LocationPermissionUtils.isBasicPermissionGranted(requireContext())
