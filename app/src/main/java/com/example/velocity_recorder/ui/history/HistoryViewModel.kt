@@ -35,6 +35,7 @@ class HistoryViewModel(
     fun deleteRide(rideId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             dataDao.deleteRide(rideId)
+            dataDao.deleteVelocities(rideId)
         }
     }
 
