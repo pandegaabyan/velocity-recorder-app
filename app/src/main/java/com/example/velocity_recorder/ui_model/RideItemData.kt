@@ -14,13 +14,22 @@ data class RideItemData(
     private val endTime: Long
 ) {
 
-    fun getStartEndText(): String {
+    fun getStartText(): String {
         if (startLocality != null && endLocality != null) {
-            return "$startLocality - $endLocality"
+            return startLocality
         }
-        val startTimeStr = ClockUtils.convertLongToString(startTime)
-        val endTimeStr = ClockUtils.convertLongToString(endTime)
-        return "$startTimeStr - $endTimeStr"
+        return ClockUtils.convertLongToString(startTime)
+    }
+
+    fun getEndText(): String {
+        if (startLocality != null && endLocality != null) {
+            return endLocality
+        }
+        return ClockUtils.convertLongToString(endTime)
+    }
+
+    fun getStartEndText(): String {
+        return "${getStartText()} - ${getEndText()}"
     }
 
     fun getDuration() = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
