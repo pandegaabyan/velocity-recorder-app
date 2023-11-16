@@ -1,13 +1,9 @@
 package com.example.velocity_recorder.ui.permission
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.velocity_recorder.utils.DialogUtils
 import com.example.velocity_recorder.utils.LocationPermissionUtils
 
 class PermissionCheckActivity : AppCompatActivity() {

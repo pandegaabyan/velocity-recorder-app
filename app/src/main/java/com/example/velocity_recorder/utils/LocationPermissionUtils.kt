@@ -7,10 +7,7 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.net.Uri
 import android.provider.Settings
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.ApiException

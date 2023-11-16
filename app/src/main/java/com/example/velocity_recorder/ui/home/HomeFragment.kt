@@ -3,6 +3,7 @@ package com.example.velocity_recorder.ui.home
 import android.content.Context
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("AppLog", "home create view")
+
         viewBinding = FragmentHomeBinding.inflate(inflater, container, false)
         viewBinding.stopBtn.hide()
         return viewBinding.root
@@ -45,6 +48,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d("AppLog", "home view created")
 
         lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
@@ -77,6 +82,41 @@ class HomeFragment : Fragment() {
                     stopRide()
                 }).show()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("AppLog", "home create")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("AppLog", "home resume")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("AppLog", "home start")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("AppLog", "home pause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("AppLog", "home stop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("AppLog", "home destroy")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("AppLog", "home destroy view")
     }
 
     private fun startRide() {
