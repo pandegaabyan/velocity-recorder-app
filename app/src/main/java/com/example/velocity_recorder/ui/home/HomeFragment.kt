@@ -1,30 +1,26 @@
 package com.example.velocity_recorder.ui.home
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.velocity_recorder.databinding.FragmentHomeBinding
 import com.example.velocity_recorder.db.AppDatabase
+import com.example.velocity_recorder.ui.chart.LineChartView
 import com.example.velocity_recorder.ui.permission.PermissionCheckActivity
 import com.example.velocity_recorder.utils.DialogUtils
 import com.example.velocity_recorder.utils.LocationPermissionUtils
-import com.github.mikephil.charting.charts.LineChart
 
 class HomeFragment : Fragment() {
 
     private lateinit var viewBinding: FragmentHomeBinding
     private lateinit var locationManager: LocationManager
     private lateinit var locationProvider: LocationProvider
-    private lateinit var lineChart: LineChart
+    private lateinit var lineChartView: LineChartView
 
     private val dataDao by lazy { AppDatabase.getDatabase(requireContext()).dataDao() }
 
@@ -50,12 +46,11 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lineChart = viewBinding.lineChart
-        val lineChartView = LineChartViewHolder(lineChart)
+        lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
 
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationProvider = LocationProvider(viewBinding, locationManager, lineChart, dataDao)
+        locationProvider = LocationProvider(viewBinding, locationManager, lineChartView, dataDao)
 
         viewBinding.startBtn.setOnClickListener {
             if (LocationPermissionUtils.isBasicPermissionGranted(requireContext())

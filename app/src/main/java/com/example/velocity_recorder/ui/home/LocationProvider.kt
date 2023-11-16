@@ -5,19 +5,16 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.util.Log
-import com.example.velocity_recorder.R
 import com.example.velocity_recorder.databinding.FragmentHomeBinding
 import com.example.velocity_recorder.db.DataDao
 import com.example.velocity_recorder.db.RideEntity
+import com.example.velocity_recorder.ui.chart.LineChartView
 import com.example.velocity_recorder.ui_model.VelocitySimpleItemData
 import com.example.velocity_recorder.ui_model.VelocitySimpleListData
 import com.example.velocity_recorder.utils.ClockUtils
 import com.example.velocity_recorder.utils.ConversionUtils
 import com.example.velocity_recorder.utils.SphericalUtils
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +26,7 @@ private const val UPDATE_RIDE_INTERVAL_MILLIS = 30000
 class LocationProvider(
     private val binding: FragmentHomeBinding,
     private val locationManager: LocationManager,
-    private val lineChart: LineChart,
+    private val lineChartView: LineChartView,
     private val dataDao: DataDao
     ): LocationListener {
 
@@ -96,7 +93,7 @@ class LocationProvider(
         if (currentVelocity > maxVelocity) {
             maxVelocity = currentVelocity
             binding.maxVelocityValue.text = ConversionUtils.getVelocityKmHr(maxVelocity)
-            lineChart.axisLeft.axisMaximum = ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat() * 1.2f
+            lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat() * 1.2f)
         }
 
         // Update the avg. velocity
@@ -116,20 +113,7 @@ class LocationProvider(
 
         // Add data to the line curve
         velocityEntries.add(Entry(elapsedTime.toFloat(),  ConversionUtils.convertMeterSecToKmHr(currentVelocity).toFloat()))
-        val dataSet = LineDataSet(velocityEntries, "Velocity Data")
-
-        // Configure the appearance of the line curve
-        dataSet.color = R.color.purple_500
-        dataSet.setCircleColor(R.color.purple_500)
-        dataSet.lineWidth = 2f
-        dataSet.circleRadius = 1f
-        dataSet.setDrawCircleHole(false)
-        dataSet.setDrawValues(false)
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-
-        // Update the line chart
-        lineChart.data = LineData(dataSet)
-        lineChart.invalidate()
+        lineChartView.setData(velocityEntries, "Velocity Data")
     }
 
     override fun onProviderEnabled(provider: String) {}

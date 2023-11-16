@@ -1,12 +1,16 @@
-package com.example.velocity_recorder.ui.home
+package com.example.velocity_recorder.ui.chart
 
 import android.graphics.Color
+import com.example.velocity_recorder.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 
-class LineChartViewHolder(
+class LineChartView(
     private val lineChart: LineChart
 ) {
     fun setupChart() {
@@ -39,5 +43,26 @@ class LineChartViewHolder(
         lineChart.axisRight.isEnabled = false
         lineChart.legend.isEnabled = false
         lineChart.setTouchEnabled(false)
+    }
+
+    fun setMaxLeftAxis(value: Float) {
+        lineChart.axisLeft.axisMaximum = value
+    }
+
+    fun setData(entries: List<Entry>, label: String) {
+        val dataSet = LineDataSet(entries, label)
+
+        // Configure the appearance of the line curve
+        dataSet.color = R.color.purple_500
+        dataSet.setCircleColor(R.color.purple_500)
+        dataSet.lineWidth = 2f
+        dataSet.circleRadius = 1f
+        dataSet.setDrawCircleHole(false)
+        dataSet.setDrawValues(false)
+        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+
+        // Update the line chart
+        lineChart.data = LineData(dataSet)
+        lineChart.invalidate()
     }
 }
