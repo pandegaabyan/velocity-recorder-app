@@ -2,11 +2,9 @@ package com.example.velocity_recorder.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 
 @Dao
 interface DataDao {
@@ -28,6 +26,9 @@ interface DataDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addVelocities(velocities: List<VelocityEntity>)
+
+    @Query("SELECT * FROM velocities WHERE ride_id = :rideId ORDER BY timestamp ASC")
+    fun getVelocities(rideId: Long): LiveData<List<VelocityEntity>>
 
     @Query("DELETE FROM velocities WHERE ride_id = :rideId")
     suspend fun deleteVelocities(rideId: Long)
