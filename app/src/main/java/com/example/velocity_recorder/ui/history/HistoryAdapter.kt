@@ -7,7 +7,7 @@ import com.example.velocity_recorder.R
 import com.example.velocity_recorder.ui_model.RideItemData
 
 class HistoryAdapter(
-    private val itemClickCallback: (rideId: Long) -> Unit,
+    private val itemClickCallback: (rideItemData: RideItemData) -> Unit,
     private val deleteItemCallback: (rideId: Long) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

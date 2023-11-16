@@ -2,13 +2,13 @@ package com.example.velocity_recorder.ui.history
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.example.velocity_recorder.utils.DialogUtils
 import com.example.velocity_recorder.databinding.ItemRideBinding
 import com.example.velocity_recorder.ui_model.RideItemData
+import com.example.velocity_recorder.utils.DialogUtils
 
 class RideItemViewHolder(
     itemView: View,
-    private val itemClickCallback: (rideId: Long) -> Unit,
+    private val itemClickCallback: (rideItemData: RideItemData) -> Unit,
     private val deleteItemCallback: (rideId: Long) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
@@ -47,7 +47,7 @@ class RideItemViewHolder(
         }
 
         viewBinding.mainLayout.setOnClickListener {
-            itemClickCallback(rideItemData.getRideId())
+            itemClickCallback(rideItemData)
         }
     }
 

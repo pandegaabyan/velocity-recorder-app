@@ -1,7 +1,6 @@
 package com.example.velocity_recorder.ui.history
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.velocity_recorder.databinding.FragmentHistoryBinding
 import com.example.velocity_recorder.db.AppDatabase
+import com.example.velocity_recorder.ui.ride_detail.RideDetailActivity
+import com.example.velocity_recorder.ui_model.RideItemData
 
 class HistoryFragment : Fragment() {
 
@@ -45,7 +46,16 @@ class HistoryFragment : Fragment() {
         viewModel.deleteRide(rideId)
     }
 
-    private fun itemClick(rideId: Long) {
-        Log.d("AppLog", "item ${rideId} clicked")
+    private fun itemClick(rideItemData: RideItemData) {
+        RideDetailActivity.open(
+            requireActivity(),
+            rideItemData.getRideId(),
+            rideItemData.getStartText(),
+            rideItemData.getEndText(),
+            rideItemData.getTotalTime(),
+            rideItemData.getTotalDistance(),
+            rideItemData.getAvgVelocity(),
+            rideItemData.getMaxVelocity()
+        )
     }
 }
