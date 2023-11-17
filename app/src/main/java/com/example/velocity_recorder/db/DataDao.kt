@@ -14,10 +14,16 @@ interface DataDao {
     suspend fun addRide(ride: RideEntity): Long
 
     @Query("SELECT * FROM rides ORDER BY created_at DESC")
-    fun getRides(): LiveData<List<RideEntity>>
+    fun getLiveRides(): LiveData<List<RideEntity>>
 
-    @Query("UPDATE rides SET end_time = :endTime, distance = :distance, max_velocity = :maxVelocity WHERE id = :id")
-    suspend fun updateRide(id: Long, endTime: Long, distance: Int, maxVelocity: Double)
+    @Query("SELECT * FROM rides WHERE is_running ORDER BY created_at ASC LIMIT 1")
+    suspend fun getRunningRide(): RideEntity?
+
+    @Query("UPDATE rides SET end_time = :endTime, distance = :distance, max_velocity = :maxVelocity, is_running = :isRunning WHERE id = :id")
+    suspend fun updateRide(id: Long, endTime: Long, distance: Int, maxVelocity: Double, isRunning: Boolean = true)
+
+    @Query("UPDATE rides SET is_running = 0 WHERE is_running")
+    suspend fun stopRunningRide()
 
     @Query("DELETE FROM rides WHERE id = :id")
     suspend fun deleteRide(id: Long)
@@ -28,7 +34,10 @@ interface DataDao {
     suspend fun addVelocities(velocities: List<VelocityEntity>)
 
     @Query("SELECT * FROM velocities WHERE ride_id = :rideId ORDER BY timestamp ASC")
-    fun getVelocities(rideId: Long): LiveData<List<VelocityEntity>>
+    fun getLiveVelocities(rideId: Long): LiveData<List<VelocityEntity>>
+
+    @Query("SELECT * FROM velocities WHERE ride_id = :rideId ORDER BY timestamp ASC")
+    suspend fun getVelocities(rideId: Long): List<VelocityEntity>
 
     @Query("DELETE FROM velocities WHERE ride_id = :rideId")
     suspend fun deleteVelocities(rideId: Long)

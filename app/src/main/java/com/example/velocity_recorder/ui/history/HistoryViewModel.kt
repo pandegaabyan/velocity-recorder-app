@@ -15,8 +15,8 @@ class HistoryViewModel(
 ) : ViewModel() {
 
     @Synchronized
-    fun getRides(): LiveData<List<RideItemData>> {
-        return dataDao.getRides().map { rideList ->
+    fun getLiveRides(): LiveData<List<RideItemData>> {
+        return dataDao.getLiveRides().map { rideList ->
             rideList.map {
                 RideItemData(
                     rideId = it.id ?: 0,

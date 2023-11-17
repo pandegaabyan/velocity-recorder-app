@@ -70,7 +70,7 @@ class RideDetailActivity: AppCompatActivity() {
         if (rideId == -1L) {
             return
         }
-        viewModel.getVelocities(rideId).observe(this) {
+        viewModel.getLiveVelocities(rideId).observe(this) {
             lineChartView.setData(it, "Velocity Data")
         }
     }

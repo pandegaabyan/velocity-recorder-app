@@ -37,7 +37,7 @@ class HistoryFragment : Fragment() {
         adapter = HistoryAdapter(::itemClick, ::deleteRide)
         viewBinding.recyclerHistory.adapter = adapter
 
-        viewModel.getRides().observe(viewLifecycleOwner) {
+        viewModel.getLiveRides().observe(viewLifecycleOwner) {
             adapter.updateData(it)
         }
     }

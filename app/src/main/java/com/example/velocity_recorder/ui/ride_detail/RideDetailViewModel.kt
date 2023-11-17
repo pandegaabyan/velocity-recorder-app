@@ -16,8 +16,8 @@ class RideDetailViewModel(
 ) : ViewModel() {
 
     @Synchronized
-    fun getVelocities(rideId: Long): LiveData<List<Entry>> {
-        return dataDao.getVelocities(rideId).map { velocityList ->
+    fun getLiveVelocities(rideId: Long): LiveData<List<Entry>> {
+        return dataDao.getLiveVelocities(rideId).map { velocityList ->
             velocityList.map {
                 Entry(
                     (it.timestamp - velocityList[0].timestamp).toFloat(),
