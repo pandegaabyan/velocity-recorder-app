@@ -9,6 +9,7 @@ import com.example.velocity_recorder.utils.DialogUtils
 class RideItemViewHolder(
     itemView: View,
     private val itemClickCallback: (rideItemData: RideItemData) -> Unit,
+    private val exportItemCallback: (rideItemData: RideItemData) -> Unit,
     private val deleteItemCallback: (rideId: Long) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
@@ -23,14 +24,7 @@ class RideItemViewHolder(
         viewBinding.distanceText.text = rideItemData.getTotalDistance()
 
         viewBinding.exportIcon.setOnClickListener {
-            DialogUtils.createDialog(
-                context = viewBinding.root.context,
-                message = "Export Icon?",
-                positiveAction = "Export",
-                negativeAction = "Cancel",
-                onSuccessAction = {},
-                onNegativeAction = {}
-            ).show()
+            exportItemCallback(rideItemData)
         }
 
         viewBinding.deleteIcon.setOnClickListener {

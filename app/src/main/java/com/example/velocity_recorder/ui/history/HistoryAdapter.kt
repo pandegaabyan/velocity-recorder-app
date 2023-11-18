@@ -8,6 +8,7 @@ import com.example.velocity_recorder.ui_model.RideItemData
 
 class HistoryAdapter(
     private val itemClickCallback: (rideItemData: RideItemData) -> Unit,
+    private val exportItemCallback: (rideItemData: RideItemData) -> Unit,
     private val deleteItemCallback: (rideId: Long) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -21,7 +22,7 @@ class HistoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_ride, parent, false)
-        return RideItemViewHolder(view, itemClickCallback, deleteItemCallback)
+        return RideItemViewHolder(view, itemClickCallback, exportItemCallback, deleteItemCallback)
     }
 
     override fun getItemCount() = rideItemList.size

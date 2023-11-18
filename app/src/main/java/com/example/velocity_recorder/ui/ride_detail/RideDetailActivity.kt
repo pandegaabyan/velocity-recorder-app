@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.velocity_recorder.components.ExportDataActivity
 import com.example.velocity_recorder.databinding.ActivityRideDetailBinding
 import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.ui.chart.LineChartView
@@ -18,6 +19,8 @@ class RideDetailActivity: AppCompatActivity() {
     private lateinit var lineChartView: LineChartView
 
     private var rideId: Long = -1L
+    private var startText: String = ""
+    private var endText: String = ""
 
     private val dataDao by lazy { AppDatabase.getDatabase(this).dataDao() }
 
@@ -36,8 +39,10 @@ class RideDetailActivity: AppCompatActivity() {
         // set ride data ui based on selected item in history
         var maxVelocityNumber: Double = 0.0
         try {
-            viewBinding.startText.text = intent.getStringExtra("start_text")!!
-            viewBinding.endText.text = intent.getStringExtra("end_text")!!
+            startText = intent.getStringExtra("start_text")!!
+            endText = intent.getStringExtra("end_text")!!
+            viewBinding.startText.text = startText
+            viewBinding.endText.text = endText
             viewBinding.timeValue.text = intent.getStringExtra("time_value")!!
             viewBinding.distanceValue.text = intent.getStringExtra("distance_value")!!
             viewBinding.avgVelocityValue.text = intent.getStringExtra("avg_velocity_value")!!
@@ -50,6 +55,9 @@ class RideDetailActivity: AppCompatActivity() {
 
         viewBinding.backIcon.setOnClickListener {
             onBackPressed()
+        }
+        viewBinding.exportIcon.setOnClickListener {
+            exportRide()
         }
         viewBinding.deleteIcon.setOnClickListener {
             deleteRide()
@@ -78,6 +86,10 @@ class RideDetailActivity: AppCompatActivity() {
         viewModel.getLiveVelocities(rideId).observe(this) {
             lineChartView.setData(it, "Velocity Data")
         }
+    }
+
+    private fun exportRide() {
+        ExportDataActivity.open(this, rideId, startText, endText)
     }
 
     private fun deleteRide() {

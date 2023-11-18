@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.velocity_recorder.components.ExportDataActivity
 import com.example.velocity_recorder.databinding.FragmentHistoryBinding
 import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.ui.ride_detail.RideDetailActivity
@@ -34,12 +35,21 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = HistoryAdapter(::itemClick, ::deleteRide)
+        adapter = HistoryAdapter(::itemClick, ::exportRide, ::deleteRide)
         viewBinding.recyclerHistory.adapter = adapter
 
         viewModel.getLiveRides().observe(viewLifecycleOwner) {
             adapter.updateData(it)
         }
+    }
+
+    private fun exportRide(rideItemData: RideItemData) {
+        ExportDataActivity.open(
+            requireActivity(),
+            rideItemData.getRideId(),
+            rideItemData.getStartText(),
+            rideItemData.getEndText()
+        )
     }
 
     private fun deleteRide(rideId: Long) {
