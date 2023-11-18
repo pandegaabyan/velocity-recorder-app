@@ -13,7 +13,7 @@ import com.example.velocity_recorder.ui.chart.LineChartView
 import com.example.velocity_recorder.utils.ConversionUtils
 import com.example.velocity_recorder.utils.DialogUtils
 
-class RideDetailActivity: AppCompatActivity() {
+class RideDetailActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityRideDetailBinding
     private lateinit var lineChartView: LineChartView
@@ -65,7 +65,9 @@ class RideDetailActivity: AppCompatActivity() {
 
         lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
-        lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat())
+        lineChartView.setMaxLeftAxis(
+            ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat()
+        )
 
     }
 
@@ -108,15 +110,16 @@ class RideDetailActivity: AppCompatActivity() {
 
     companion object {
 
-        fun open(context: Context,
-                 rideId: Long,
-                 startText: String,
-                 endText: String,
-                 timeValue: String,
-                 distanceValue: String,
-                 avgVelocityValue: String,
-                 maxVelocityValue: String,
-                 maxVelocityNumber: Double
+        fun open(
+            context: Context,
+            rideId: Long,
+            startText: String,
+            endText: String,
+            timeValue: String,
+            distanceValue: String,
+            avgVelocityValue: String,
+            maxVelocityValue: String,
+            maxVelocityNumber: Double
         ) {
             val intent = Intent(context, RideDetailActivity::class.java).also {
                 it.putExtra("ride_id", rideId)

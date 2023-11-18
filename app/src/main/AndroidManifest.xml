@@ -36,8 +36,7 @@
             android:name=".components.PermissionCheckActivity"
             android:theme="@style/AppDialogActivityTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".components.ExportDataActivity" />
+        <activity android:name=".components.ExportDataActivity" />
 
         <service
             android:name=".components.ForegroundService"

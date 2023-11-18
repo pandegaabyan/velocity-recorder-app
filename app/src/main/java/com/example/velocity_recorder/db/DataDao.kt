@@ -20,7 +20,13 @@ interface DataDao {
     suspend fun getRunningRide(): RideEntity?
 
     @Query("UPDATE rides SET end_time = :endTime, distance = :distance, max_velocity = :maxVelocity, is_running = :isRunning WHERE id = :id")
-    suspend fun updateRide(id: Long, endTime: Long, distance: Int, maxVelocity: Double, isRunning: Boolean = true)
+    suspend fun updateRide(
+        id: Long,
+        endTime: Long,
+        distance: Int,
+        maxVelocity: Double,
+        isRunning: Boolean = true
+    )
 
     @Query("UPDATE rides SET is_running = 0 WHERE is_running")
     suspend fun stopRunningRide()

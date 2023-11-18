@@ -65,8 +65,14 @@ class HomeFragment : Fragment() {
         lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
 
-        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationProvider = LocationProvider(locationManager, dataDao, ::onChangeHandler, ::onMaxVelocityChangeHandler)
+        locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationProvider = LocationProvider(
+            locationManager,
+            dataDao,
+            ::onChangeHandler,
+            ::onMaxVelocityChangeHandler
+        )
 
         viewBinding.startBtn.setOnClickListener {
             if (LocationPermissionUtils.isBasicPermissionGranted(requireContext())
@@ -113,8 +119,8 @@ class HomeFragment : Fragment() {
     private fun startRide(shouldClear: Boolean) {
         if (shouldClear) {
             locationProvider.resetData()
-            onChangeHandler(0,0.0,0.0,false)
-            onMaxVelocityChangeHandler(0.0,false)
+            onChangeHandler(0, 0.0, 0.0, false)
+            onMaxVelocityChangeHandler(0.0, false)
             velocityEntries.clear()
             lineChartView.clear()
         }
@@ -144,7 +150,7 @@ class HomeFragment : Fragment() {
 
     private fun checkAndContinuePrevState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            dataDao.getRunningRide().let {rideEntity ->
+            dataDao.getRunningRide().let { rideEntity ->
                 val isFresh = if (rideEntity != null) {
                     System.currentTimeMillis() - rideEntity.endTime < 60000
                 } else {
@@ -154,16 +160,18 @@ class HomeFragment : Fragment() {
                 if (rideId != null && isFresh == true) {
                     viewBinding.velocityValue.text = getString(R.string.loading)
                     delay(1000)
-                    dataDao.getVelocities(rideId).let {velocityList ->
+                    dataDao.getVelocities(rideId).let { velocityList ->
                         val firstItem = velocityList.getOrNull(0)
                         if (firstItem != null) {
-                            locationProvider.setPrevData(LocationInitData(
-                                rideId,
-                                rideEntity.startTime,
-                                rideEntity.maxVelocity,
-                                firstItem.latitude,
-                                firstItem.longitude
-                            ))
+                            locationProvider.setPrevData(
+                                LocationInitData(
+                                    rideId,
+                                    rideEntity.startTime,
+                                    rideEntity.maxVelocity,
+                                    firstItem.latitude,
+                                    firstItem.longitude
+                                )
+                            )
                             velocityEntries.clear()
                             velocityEntries.addAll(velocityList.map {
                                 Entry(
@@ -189,7 +197,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun onChangeHandler(elapsedTime: Long, distance: Double, velocity: Double, shouldUpdateChart: Boolean = true) {
+    private fun onChangeHandler(
+        elapsedTime: Long,
+        distance: Double,
+        velocity: Double,
+        shouldUpdateChart: Boolean = true
+    ) {
         val elapsedTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
         viewBinding.timeValue.text = ClockUtils.getTime(elapsedTimeSeconds)
 

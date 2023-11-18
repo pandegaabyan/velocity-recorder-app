@@ -51,15 +51,15 @@ class ExportDataActivity : AppCompatActivity() {
         }
     }
 
-     private fun fixTimeForFilename(timeText: String?, defaultText: String): String {
-         if (timeText == null) {
-             return defaultText
-         }
-         return timeText
-             .replace("/","-")
-             .replace(":","-")
-             .replace(" ","T")
-     }
+    private fun fixTimeForFilename(timeText: String?, defaultText: String): String {
+        if (timeText == null) {
+            return defaultText
+        }
+        return timeText
+            .replace("/", "-")
+            .replace(":", "-")
+            .replace(" ", "T")
+    }
 
     // create text file
     private fun createFile() {
@@ -99,10 +99,11 @@ class ExportDataActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun open(context: Context,
-                 rideId: Long,
-                 startText: String,
-                 endText: String
+        fun open(
+            context: Context,
+            rideId: Long,
+            startText: String,
+            endText: String
         ) {
             val intent = Intent(context, ExportDataActivity::class.java).also {
                 it.putExtra("ride_id", rideId)

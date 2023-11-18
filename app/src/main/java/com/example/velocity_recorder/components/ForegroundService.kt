@@ -88,7 +88,14 @@ class ForegroundService : Service() {
     }
 
     companion object {
-        fun startService(context: Context, rideId: Long, startTime: Long, maxVelocity: Double, startLatitude: Double, startLongitude: Double) {
+        fun startService(
+            context: Context,
+            rideId: Long,
+            startTime: Long,
+            maxVelocity: Double,
+            startLatitude: Double,
+            startLongitude: Double
+        ) {
             val startIntent = Intent(context, ForegroundService::class.java)
             startIntent.putExtra("ride_id", rideId)
             startIntent.putExtra("start_time", startTime)
@@ -97,6 +104,7 @@ class ForegroundService : Service() {
             startIntent.putExtra("start_longitude", startLongitude)
             ContextCompat.startForegroundService(context, startIntent)
         }
+
         fun stopService(context: Context) {
             val stopIntent = Intent(context, ForegroundService::class.java)
             context.stopService(stopIntent)

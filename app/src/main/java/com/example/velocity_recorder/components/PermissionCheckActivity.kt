@@ -62,7 +62,8 @@ class PermissionCheckActivity : AppCompatActivity() {
 
     private fun checkAndProceed() {
         if (LocationPermissionUtils.isBasicPermissionGranted(this) &&
-            LocationPermissionUtils.isLocationEnabled(this)) {
+            LocationPermissionUtils.isLocationEnabled(this)
+        ) {
             proceed()
         }
     }
