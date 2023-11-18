@@ -1,42 +1,35 @@
-package com.example.velocity_recorder.ui.home
+package com.example.velocity_recorder.components
 
 import android.annotation.SuppressLint
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.util.Log
-import com.example.velocity_recorder.databinding.FragmentHomeBinding
 import com.example.velocity_recorder.db.DataDao
 import com.example.velocity_recorder.db.RideEntity
-import com.example.velocity_recorder.ui.chart.LineChartView
 import com.example.velocity_recorder.ui_model.VelocitySimpleItemData
 import com.example.velocity_recorder.ui_model.VelocitySimpleListData
-import com.example.velocity_recorder.utils.ClockUtils
-import com.example.velocity_recorder.utils.ConversionUtils
 import com.example.velocity_recorder.utils.SphericalUtils
-import com.github.mikephil.charting.data.Entry
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 private const val UPDATE_RIDE_INTERVAL_MILLIS = 30000
 
 class LocationProvider(
-    private val binding: FragmentHomeBinding,
     private val locationManager: LocationManager,
-    private val lineChartView: LineChartView,
-    private val dataDao: DataDao
-    ): LocationListener {
+    private val dataDao: DataDao,
+    private val onChange: (elapsedTime: Long, distance: Double, velocity: Double) -> Unit,
+    private val onMaxVelocityChange: (maxVelocity: Double) -> Unit,
+) : LocationListener {
 
+    private var rideId: Long? = null
     private var firstChange = true
+    private var lastUpdateRideTime: Long = 0
     private var startTime: Long = 0
     private var startLatitude: Double = 0.0
     private var startLongitude: Double = 0.0
-
-    private var rideId: Long? = null
-    private var lastUpdateRideTime: Long = 0
 
     private var distance: Double = 0.0
     private var currentTime: Long = 0
@@ -44,76 +37,80 @@ class LocationProvider(
     private var maxVelocity: Double = 0.0 // Maximum velocity
 
     private val velocityListData = VelocitySimpleListData(mutableListOf<VelocitySimpleItemData>())
-    private val velocityEntries = ArrayList<Entry>() // Velocity data for the line curve
+
+    fun setPrevData(prevData: LocationInitData) {
+        if (prevData.rideId != null && prevData.rideId != -1L) {
+            rideId = prevData.rideId
+            maxVelocity = prevData.maxVelocity
+            startTime = prevData.startTime
+            startLatitude = prevData.startLatitude
+            startLongitude = prevData.startLongitude
+        }
+    }
 
     @SuppressLint("MissingPermission")
     fun subscribe() {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
     }
 
-    fun unsubscribe() {
+    fun unsubscribe(isDone: Boolean): LocationInitData {
         locationManager.removeUpdates(this)
         CoroutineScope(Dispatchers.IO).launch {
-            updateRideVelocityData()
+            updateRideVelocityData(isDone)
         }
+
+        return LocationInitData(rideId, startTime, maxVelocity, startLatitude, startLongitude)
     }
 
     override fun onLocationChanged(location: Location) {
         currentVelocity = location.speed.toDouble()
-        binding.velocityValue.text = ConversionUtils.getVelocityKmHr(currentVelocity)
-
         currentTime = System.currentTimeMillis()
-        if(firstChange) {
+
+        if (firstChange) {
             firstChange = false
-            startTime = currentTime
-            startLatitude = location.latitude
-            startLongitude = location.longitude
             lastUpdateRideTime = currentTime
 
-            CoroutineScope(Dispatchers.IO).launch {
-                initializeRideData().let {
-                    rideId = it
+            if (rideId == null) {
+                startTime = currentTime
+                startLatitude = location.latitude
+                startLongitude = location.longitude
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    initializeRideData().let {
+                        rideId = it
+                    }
                 }
             }
         }
+
 
         // Update total distance
         distance = SphericalUtils.computeDistanceBetween(
             LatLng(startLatitude, startLongitude),
             LatLng(location.latitude, location.longitude)
         )
-        binding.distanceValue.text = ConversionUtils.getDistanceKm(distance)
 
-        // Update elapsed time
-        val elapsedTime = (currentTime - startTime)
-        val elapsedTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
-        binding.timeValue.text = ClockUtils.getTime(elapsedTimeSeconds)
-
-        // Update the max. velocity
+        // Update max velocity and call onMaxVelocityChange
         if (currentVelocity > maxVelocity) {
             maxVelocity = currentVelocity
-            binding.maxVelocityValue.text = ConversionUtils.getVelocityKmHr(maxVelocity)
-            lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat() * 1.2f)
+            onMaxVelocityChange(maxVelocity)
         }
 
-        // Update the avg. velocity
-        val avgVelocity = distance / elapsedTimeSeconds
-        binding.avgVelocityValue.text = ConversionUtils.getVelocityKmHr(avgVelocity)
-
         // Add and update data if conditions are satisfied
-        velocityListData.add(VelocitySimpleItemData(
-            timestamp = currentTime,
-            velocity = currentVelocity,
-            longitude = location.longitude,
-            latitude = location.latitude,
-        ))
+        velocityListData.add(
+            VelocitySimpleItemData(
+                timestamp = currentTime,
+                velocity = currentVelocity,
+                longitude = location.longitude,
+                latitude = location.latitude,
+            )
+        )
         CoroutineScope(Dispatchers.IO).launch {
             updateRideVelocityDataConditionally()
         }
 
-        // Add data to the line curve
-        velocityEntries.add(Entry(elapsedTime.toFloat(),  ConversionUtils.convertMeterSecToKmHr(currentVelocity).toFloat()))
-        lineChartView.setData(velocityEntries, "Velocity Data")
+        // Call onChange
+        onChange((currentTime - startTime), distance, currentVelocity)
     }
 
     override fun onProviderEnabled(provider: String) {}
@@ -134,7 +131,7 @@ class LocationProvider(
         return rideIdNew
     }
 
-    private suspend fun updateRideVelocityData() {
+    private suspend fun updateRideVelocityData(isDone: Boolean) {
         var rideIdNotNull: Long
         try {
             rideIdNotNull = rideId!!
@@ -148,6 +145,7 @@ class LocationProvider(
             currentTime,
             distance.toInt(),
             maxVelocity,
+            !isDone
         )
         dataDao.addVelocities(velocityListData.getVelocityEntities(rideIdNotNull))
         velocityListData.clear()
@@ -157,7 +155,7 @@ class LocationProvider(
 
     private suspend fun updateRideVelocityDataConditionally() {
         if (rideId != null && (currentTime - lastUpdateRideTime) > UPDATE_RIDE_INTERVAL_MILLIS) {
-            updateRideVelocityData()
+            updateRideVelocityData(false)
         }
     }
 
