@@ -13,10 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import com.example.velocity_recorder.components.ForegroundService
 import com.example.velocity_recorder.components.LocationInitData
 import com.example.velocity_recorder.components.LocationProvider
+import com.example.velocity_recorder.components.PermissionCheckActivity
 import com.example.velocity_recorder.databinding.FragmentHomeBinding
 import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.ui.chart.LineChartView
-import com.example.velocity_recorder.ui.permission.PermissionCheckActivity
 import com.example.velocity_recorder.utils.ClockUtils
 import com.example.velocity_recorder.utils.ConversionUtils
 import com.example.velocity_recorder.utils.DialogUtils

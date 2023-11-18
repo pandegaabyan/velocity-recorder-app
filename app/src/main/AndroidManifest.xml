@@ -33,7 +33,7 @@
             android:label="Ride Detail"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.permission.PermissionCheckActivity"
+            android:name=".components.PermissionCheckActivity"
             android:theme="@style/AppDialogActivityTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
