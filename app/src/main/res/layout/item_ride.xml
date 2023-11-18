@@ -35,6 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
+                    android:textColor="@color/purple_500"
                     tools:text="Start - End" />
 
                 <TextView
@@ -57,16 +58,16 @@
 
                 <ImageView
                     android:id="@+id/export_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:src="@drawable/ic_baseline_export_24" />
 
                 <ImageView
                     android:id="@+id/delete_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:src="@drawable/ic_baseline_delete_24" />

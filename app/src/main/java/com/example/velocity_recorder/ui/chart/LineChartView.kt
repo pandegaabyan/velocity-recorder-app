@@ -1,6 +1,5 @@
 package com.example.velocity_recorder.ui.chart
 
-import android.graphics.Color
 import com.example.velocity_recorder.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
@@ -15,6 +14,7 @@ class LineChartView(
 ) {
     fun setupChart() {
         lineChart.clear()
+        lineChart.setNoDataTextColor(R.color.purple_500)
         lineChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
             labelCount = 5
@@ -26,14 +26,14 @@ class LineChartView(
                     return "%02d:%02d".format(minutes.toInt(), remainingSeconds.toInt())
                 }
             }
-            textColor = Color.BLUE
+            textColor = R.color.purple_500
         }
         lineChart.axisLeft.apply {
             axisMinimum = 0f
             setDrawGridLines(true)
             setDrawAxisLine(false)
             textSize = 12f
-            textColor = Color.BLUE
+            textColor = R.color.purple_500
         }
         lineChart.axisRight.isEnabled = false
         lineChart.description.isEnabled = false
@@ -60,5 +60,9 @@ class LineChartView(
         // Update the line chart
         lineChart.data = LineData(dataSet)
         lineChart.invalidate()
+    }
+
+    fun clear() {
+        lineChart.clear()
     }
 }

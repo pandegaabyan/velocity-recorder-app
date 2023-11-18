@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="28dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:orientation="horizontal">
@@ -27,8 +27,8 @@
 
             <ImageView
                 android:id="@+id/back_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_baseline_left_arrow_24" />
 
         </LinearLayout>
@@ -42,14 +42,14 @@
 
             <ImageView
                 android:id="@+id/delete_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_baseline_delete_24" />
 
             <ImageView
                 android:id="@+id/export_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_marginLeft="5dp"
                 android:src="@drawable/ic_baseline_export_24" />
 
@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="28dp"
         android:orientation="vertical">
 
         <TextView
@@ -72,7 +72,8 @@
             android:text="Start"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:textSize="32sp" />
+            android:textSize="24sp"
+            android:textColor="@color/purple_500" />
 
         <TextView
             android:id="@+id/to_text"
@@ -82,7 +83,7 @@
             android:text="to"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/end_text"
@@ -92,7 +93,8 @@
             android:text="End"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:textSize="32sp" />
+            android:textSize="24sp"
+            android:textColor="@color/purple_500" />
 
     </LinearLayout>
 
@@ -118,7 +120,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_timer_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/time_value"
@@ -126,7 +128,8 @@
                 android:layout_height="wrap_content"
                 android:text="00:00"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -146,7 +149,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_square_foot_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/distance_value"
@@ -155,7 +158,8 @@
                 android:layout_weight="1"
                 android:text="0 km"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -183,7 +187,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_medium_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/avg_velocity_value"
@@ -192,7 +196,8 @@
                 android:layout_weight="1"
                 android:text="0 km/h"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -212,7 +217,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_fast_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/max_velocity_value"
@@ -221,7 +226,8 @@
                 android:layout_weight="1"
                 android:text="0 km/h"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -230,10 +236,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_margin="20dp">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="28dp" >
 
     <TextView
         android:id="@+id/chart_title"
@@ -241,7 +248,7 @@
         android:layout_height="wrap_content"
         android:text="Velocity (km/h) vs Time (mm:ss)"
         android:textAlignment="center"
-        android:textSize="24sp" />
+        android:textSize="20sp"/>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"

@@ -14,10 +14,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text=""
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="28dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:textSize="48sp" />
+        android:textSize="40sp"
+        android:textColor="@color/purple_500" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +42,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_timer_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/time_value"
@@ -49,7 +50,8 @@
                 android:layout_height="wrap_content"
                 android:text="00:00"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -69,7 +71,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_square_foot_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/distance_value"
@@ -78,7 +80,8 @@
                 android:layout_weight="1"
                 android:text="0 km"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -106,7 +109,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_medium_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/avg_velocity_value"
@@ -115,7 +118,8 @@
                 android:layout_weight="1"
                 android:text="0 km/h"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -135,7 +139,7 @@
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_fast_24"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/max_velocity_value"
@@ -144,7 +148,8 @@
                 android:layout_weight="1"
                 android:text="0 km/h"
                 android:textAlignment="center"
-                android:textSize="28sp" />
+                android:textSize="24sp"
+                android:textColor="@color/purple_500" />
 
         </LinearLayout>
 
@@ -153,10 +158,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_margin="20dp">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="28dp">
 
         <TextView
             android:id="@+id/chart_title"
@@ -164,7 +171,7 @@
             android:layout_height="wrap_content"
             android:text="Velocity (km/h) vs Time (mm:ss)"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/line_chart"
@@ -179,33 +186,34 @@
         android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineButton"
+            android:id="@+id/guideline_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.25" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/startBtn"
+            android:id="@+id/start_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_baseline_play_arrow_24"
-            app:layout_constraintBottom_toBottomOf="@id/guidelineButton"
-            app:layout_constraintTop_toBottomOf="@id/guidelineButton"
+            app:backgroundTint="@color/purple_500"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_button"
+            app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:tint="#FFFFFF" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/stopBtn"
+            android:id="@+id/stop_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_baseline_stop_24"
-            app:backgroundTint="#000000"
-            app:layout_constraintBottom_toBottomOf="@id/guidelineButton"
-            app:layout_constraintTop_toBottomOf="@id/guidelineButton"
+            app:backgroundTint="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_button"
+            app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:tint="#FFFFFF" />
