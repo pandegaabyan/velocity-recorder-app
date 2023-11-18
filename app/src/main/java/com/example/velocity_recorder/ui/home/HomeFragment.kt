@@ -3,7 +3,6 @@ package com.example.velocity_recorder.ui.home
 import android.content.Context
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,7 @@ class HomeFragment : Fragment() {
             if (LocationPermissionUtils.isLocationEnabled(requireContext())
                 && LocationPermissionUtils.isBasicPermissionGranted(requireContext())
             ) {
-                startRide()
+                startRide(true)
             }
         }
 
@@ -72,7 +71,7 @@ class HomeFragment : Fragment() {
             if (LocationPermissionUtils.isBasicPermissionGranted(requireContext())
                 && LocationPermissionUtils.isLocationEnabled(requireContext())
             ) {
-                startRide()
+                startRide(true)
             } else {
                 permissionActivityResultLauncher.launch(
                     PermissionCheckActivity.getOpenIntent(
@@ -99,7 +98,7 @@ class HomeFragment : Fragment() {
 
         ForegroundService.stopService(requireContext())
 
-        setInitialData()
+        checkAndContinuePrevState()
     }
 
     override fun onStop() {
@@ -110,9 +109,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun startRide() {
+    private fun startRide(shouldClear: Boolean) {
+        if (shouldClear) {
+            locationProvider.resetData()
+            onChangeHandler(0,0.0,0.0,false)
+            onMaxVelocityChangeHandler(0.0,false)
+            velocityEntries.clear()
+            lineChartView.clear()
+        }
         locationProvider.subscribe()
-        viewBinding.velocityValue.text = "No motion"
         viewBinding.stopBtn.show()
         viewBinding.startBtn.hide()
         isRunning = true
@@ -136,11 +141,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setInitialData() {
+    private fun checkAndContinuePrevState() {
         viewLifecycleOwner.lifecycleScope.launch {
             dataDao.getRunningRide().let {rideEntity ->
                 val isFresh = if (rideEntity != null) {
-                    rideEntity.endTime - System.currentTimeMillis() < 60000
+                    System.currentTimeMillis() - rideEntity.endTime < 60000
                 } else {
                     null
                 }
@@ -158,6 +163,7 @@ class HomeFragment : Fragment() {
                                 firstItem.latitude,
                                 firstItem.longitude
                             ))
+                            velocityEntries.clear()
                             velocityEntries.addAll(velocityList.map {
                                 Entry(
                                     (it.timestamp - velocityList[0].timestamp).toFloat(),
@@ -166,7 +172,7 @@ class HomeFragment : Fragment() {
                             })
                             lineChartView.setData(velocityEntries, "Velocity Data")
                             onMaxVelocityChangeHandler(rideEntity.maxVelocity)
-                            startRide()
+                            startRide(false)
                         } else {
                             viewBinding.startBtn.show()
                         }
@@ -182,7 +188,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun onChangeHandler(elapsedTime: Long, distance: Double, velocity: Double) {
+    private fun onChangeHandler(elapsedTime: Long, distance: Double, velocity: Double, shouldUpdateChart: Boolean = true) {
         val elapsedTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
         viewBinding.timeValue.text = ClockUtils.getTime(elapsedTimeSeconds)
 
@@ -196,12 +202,24 @@ class HomeFragment : Fragment() {
         }
         viewBinding.avgVelocityValue.text = ConversionUtils.getVelocityKmHr(avgVelocity)
 
-        velocityEntries.add(Entry(elapsedTime.toFloat(),  ConversionUtils.convertMeterSecToKmHr(velocity).toFloat()))
-        lineChartView.setData(velocityEntries, "Velocity Data")
+        if (shouldUpdateChart) {
+            velocityEntries.add(
+                Entry(
+                    elapsedTime.toFloat(),
+                    ConversionUtils.convertMeterSecToKmHr(velocity).toFloat()
+                )
+            )
+            lineChartView.setData(velocityEntries, "Velocity Data")
+        }
     }
 
-    private fun onMaxVelocityChangeHandler(maxVelocity: Double) {
+    private fun onMaxVelocityChangeHandler(maxVelocity: Double, shouldUpdateChart: Boolean = true) {
         viewBinding.maxVelocityValue.text = ConversionUtils.getVelocityKmHr(maxVelocity)
-        lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat() * 1.2f)
+
+        if (shouldUpdateChart) {
+            lineChartView.setMaxLeftAxis(
+                ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat() * 1.2f
+            )
+        }
     }
 }

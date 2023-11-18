@@ -38,6 +38,19 @@ class LocationProvider(
 
     private val velocityListData = VelocitySimpleListData(mutableListOf<VelocitySimpleItemData>())
 
+    fun resetData() {
+        rideId = null
+        firstChange = true
+        lastUpdateRideTime = 0
+        startTime = 0
+        startLatitude = 0.0
+        startLongitude = 0.0
+        distance = 0.0
+        currentTime = 0
+        currentVelocity = 0.0
+        maxVelocity = 0.0
+    }
+
     fun setPrevData(prevData: LocationInitData) {
         if (prevData.rideId != null && prevData.rideId != -1L) {
             rideId = prevData.rideId
@@ -96,6 +109,9 @@ class LocationProvider(
             onMaxVelocityChange(maxVelocity)
         }
 
+        // Call onChange
+        onChange((currentTime - startTime), distance, currentVelocity)
+
         // Add and update data if conditions are satisfied
         velocityListData.add(
             VelocitySimpleItemData(
@@ -108,9 +124,6 @@ class LocationProvider(
         CoroutineScope(Dispatchers.IO).launch {
             updateRideVelocityDataConditionally()
         }
-
-        // Call onChange
-        onChange((currentTime - startTime), distance, currentVelocity)
     }
 
     override fun onProviderEnabled(provider: String) {}
