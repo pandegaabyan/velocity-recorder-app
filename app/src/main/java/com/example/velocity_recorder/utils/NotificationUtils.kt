@@ -51,8 +51,8 @@ object NotificationUtils {
             PendingIntent.FLAG_IMMUTABLE
         )
         val notificationBuilder = NotificationCompat.Builder(context, FOREGROUND_CHANNEL_ID)
-            .setContentTitle("Velocity Recorder Running")
-            .setContentText("Keep the app open for GPS related measurement")
+            .setContentTitle(context.getString(R.string.notif_title))
+            .setContentText(context.getString(R.string.notif_text))
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_speedometer_white_24dp)
             .setContentIntent(pendingIntent)

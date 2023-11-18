@@ -37,7 +37,7 @@ class RideDetailActivity: AppCompatActivity() {
         rideId = intent.getLongExtra("ride_id", -1L)
 
         // set ride data ui based on selected item in history
-        var maxVelocityNumber: Double = 0.0
+        var maxVelocityNumber = 0.0
         try {
             startText = intent.getStringExtra("start_text")!!
             endText = intent.getStringExtra("end_text")!!
@@ -49,12 +49,12 @@ class RideDetailActivity: AppCompatActivity() {
             viewBinding.maxVelocityValue.text = intent.getStringExtra("max_velocity_value")!!
 
             maxVelocityNumber = intent.getDoubleExtra("max_velocity_number", 0.0)
-        } catch (npe: NullPointerException) {
-            Log.d("AppLog", "failed to get ride data, npe: ${npe.toString()}")
+        } catch (e: NullPointerException) {
+            Log.d("AppLog", "failed to get ride data, NullPointerException: ${e.stackTrace}")
         }
 
         viewBinding.backIcon.setOnClickListener {
-            onBackPressed()
+            finish()
         }
         viewBinding.exportIcon.setOnClickListener {
             exportRide()
@@ -65,7 +65,7 @@ class RideDetailActivity: AppCompatActivity() {
 
         lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
-        lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat() * 1.2f)
+        lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat())
 
     }
 
@@ -73,10 +73,6 @@ class RideDetailActivity: AppCompatActivity() {
         super.onStart()
 
         setChartData()
-    }
-
-    override fun onBackPressed() {
-        finish()
     }
 
     private fun setChartData() {
@@ -104,7 +100,7 @@ class RideDetailActivity: AppCompatActivity() {
             negativeAction = "Cancel",
             onSuccessAction = {
                 viewModel.deleteRide(rideId)
-                onBackPressed()
+                finish()
             },
             onNegativeAction = {}
         ).show()

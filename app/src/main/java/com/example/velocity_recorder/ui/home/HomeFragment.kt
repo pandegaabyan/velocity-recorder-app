@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.velocity_recorder.R
 import com.example.velocity_recorder.components.ForegroundService
 import com.example.velocity_recorder.components.LocationInitData
 import com.example.velocity_recorder.components.LocationProvider
@@ -151,7 +152,7 @@ class HomeFragment : Fragment() {
                 }
                 val rideId = rideEntity?.id
                 if (rideId != null && isFresh == true) {
-                    viewBinding.velocityValue.text = "Loading ..."
+                    viewBinding.velocityValue.text = getString(R.string.loading)
                     delay(1000)
                     dataDao.getVelocities(rideId).let {velocityList ->
                         val firstItem = velocityList.getOrNull(0)
@@ -218,7 +219,7 @@ class HomeFragment : Fragment() {
 
         if (shouldUpdateChart) {
             lineChartView.setMaxLeftAxis(
-                ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat() * 1.2f
+                ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat()
             )
         }
     }

@@ -2,7 +2,6 @@ package com.example.velocity_recorder.ui.chart
 
 import com.example.velocity_recorder.R
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -42,7 +41,7 @@ class LineChartView(
     }
 
     fun setMaxLeftAxis(value: Float) {
-        lineChart.axisLeft.axisMaximum = value
+        lineChart.axisLeft.axisMaximum = value * 1.2f
     }
 
     fun setData(entries: List<Entry>, label: String) {

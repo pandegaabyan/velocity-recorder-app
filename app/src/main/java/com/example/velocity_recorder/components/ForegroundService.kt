@@ -7,11 +7,12 @@ import android.location.LocationManager
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.PowerManager.PARTIAL_WAKE_LOCK
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.utils.NotificationUtils
 import java.util.concurrent.TimeUnit
+
+private const val WAKELOCK_INTERVAL_SECONDS = 600L
 
 class ForegroundService : Service() {
 
@@ -52,7 +53,7 @@ class ForegroundService : Service() {
         )
 
         locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationProvider = LocationProvider(locationManager, dataDao, ::onChangeHandler, {})
+        locationProvider = LocationProvider(locationManager, dataDao, ::onChangeHandler) {}
 
         locationProvider.setPrevData(locationInitData)
         locationProvider.subscribe()
@@ -82,7 +83,7 @@ class ForegroundService : Service() {
 
     private fun checkAndUpdateCPUWake() {
         if (wakeLock.isHeld.not()) {
-            wakeLock.acquire(TimeUnit.HOURS.toMillis(1))
+            wakeLock.acquire(TimeUnit.SECONDS.toMillis(WAKELOCK_INTERVAL_SECONDS))
         }
     }
 

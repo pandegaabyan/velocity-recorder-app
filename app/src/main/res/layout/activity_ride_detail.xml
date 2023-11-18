@@ -50,7 +50,7 @@
                 android:id="@+id/export_icon"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:src="@drawable/ic_baseline_export_24" />
 
         </LinearLayout>
@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Start"
+            android:text="@string/start_text"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textSize="24sp"
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="to"
+            android:text="@string/to_text"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textSize="20sp" />
@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="End"
+            android:text="@string/end_text"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textSize="24sp"
@@ -116,7 +116,7 @@
                 android:id="@+id/time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time"
+                android:text="@string/time_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_timer_24"
@@ -126,7 +126,7 @@
                 android:id="@+id/time_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="00:00"
+                android:text="@string/time_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -145,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Distance"
+                android:text="@string/distance_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_square_foot_24"
@@ -156,7 +156,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 km"
+                android:text="@string/distance_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -183,7 +183,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Avg velocity"
+                android:text="@string/avg_velocity_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_medium_24"
@@ -194,7 +194,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 km/h"
+                android:text="@string/avg_velocity_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -213,7 +213,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Max velocity"
+                android:text="@string/max_velocity_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_fast_24"
@@ -224,7 +224,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 km/h"
+                android:text="@string/max_velocity_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -246,7 +246,7 @@
         android:id="@+id/chart_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Velocity (km/h) vs Time (mm:ss)"
+        android:text="@string/chart_title"
         android:textAlignment="center"
         android:textSize="20sp"/>
 

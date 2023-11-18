@@ -8,6 +8,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.provider.Settings
+import android.util.Log
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.ApiException
@@ -127,7 +128,7 @@ object LocationPermissionUtils {
             val label = info.applicationInfo.loadLabel(pm) as String
             return label != "Market"
         } catch (e: PackageManager.NameNotFoundException) {
-
+            Log.d("AppLog", "failed to update data, NameNotFoundException: ${e.stackTrace}")
         }
 
         return false

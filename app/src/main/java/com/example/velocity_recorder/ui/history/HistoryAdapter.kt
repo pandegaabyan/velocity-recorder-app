@@ -1,5 +1,6 @@
 package com.example.velocity_recorder.ui.history
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ class HistoryAdapter(
 
     private val rideItemList = mutableListOf<RideItemData>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(rideItemList: List<RideItemData>) {
         this.rideItemList.clear()
         this.rideItemList.addAll(rideItemList)

@@ -36,7 +36,7 @@ class LocationProvider(
     private var currentVelocity: Double = 0.0
     private var maxVelocity: Double = 0.0 // Maximum velocity
 
-    private val velocityListData = VelocitySimpleListData(mutableListOf<VelocitySimpleItemData>())
+    private val velocityListData = VelocitySimpleListData(mutableListOf())
 
     fun resetData() {
         rideId = null
@@ -145,11 +145,11 @@ class LocationProvider(
     }
 
     private suspend fun updateRideVelocityData(isDone: Boolean) {
-        var rideIdNotNull: Long
+        val rideIdNotNull: Long
         try {
             rideIdNotNull = rideId!!
-        } catch (npe: NullPointerException) {
-            Log.d("AppLog", "failed to update data, npe: ${npe.toString()}")
+        } catch (e: NullPointerException) {
+            Log.d("AppLog", "failed to update data, NullPointerException: ${e.stackTrace}")
             return
         }
 

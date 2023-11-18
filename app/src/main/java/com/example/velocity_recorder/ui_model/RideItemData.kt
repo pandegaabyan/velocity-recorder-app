@@ -14,6 +14,8 @@ data class RideItemData(
     private val endTime: Long
 ) {
 
+    private fun getDuration() = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
+
     fun getStartText(): String {
         if (startLocality != null && endLocality != null) {
             return startLocality
@@ -31,8 +33,6 @@ data class RideItemData(
     fun getStartEndText(): String {
         return "${getStartText()} - ${getEndText()}"
     }
-
-    fun getDuration() = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
 
     fun getTotalTime() = ClockUtils.getTime(getDuration())
 

@@ -90,11 +90,11 @@ class ExportDataActivity : AppCompatActivity() {
                 }
                 withContext(Dispatchers.IO) {
                     bw.close()
-                    Log.d("AppLog", "finish export ride data")
+                    Log.d("AppLog", "finish export ride data for ride $rideId")
                 }
             }
-        } catch (ioe: IOException) {
-            Log.d("AppLog", "failed to export ride data, ioe: ${ioe.toString()}")
+        } catch (e: IOException) {
+            Log.d("AppLog", "failed to export ride data, IOException: ${e.stackTrace}")
         }
     }
 

@@ -17,6 +17,11 @@
 package com.example.velocity_recorder.utils
 
 import com.google.android.gms.maps.model.LatLng
+import kotlin.math.asin
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 object SphericalUtils {
     /**
@@ -26,9 +31,9 @@ object SphericalUtils {
     private const val EARTH_RADIUS = 6371009.0
 
     /**
-     * Returns the angle between two LatLngs, in radians.
+     * Returns the angle between two LatitudeLongitudes, in radians.
      */
-    fun computeAngleBetween(from: LatLng, to: LatLng): Double {
+    private fun computeAngleBetween(from: LatLng, to: LatLng): Double {
         // Haversine's formula
         val fromLat = Math.toRadians(from.latitude)
         val fromLng = Math.toRadians(from.longitude)
@@ -36,16 +41,16 @@ object SphericalUtils {
         val toLng = Math.toRadians(to.longitude)
         val dLat = fromLat - toLat
         val dLng = fromLng - toLng
-        return 2 * Math.asin(
-            Math.sqrt(
-                Math.pow(Math.sin(dLat / 2), 2.0) +
-                        Math.cos(fromLat) * Math.cos(toLat) * Math.pow(Math.sin(dLng / 2), 2.0)
+        return 2 * asin(
+            sqrt(
+                sin(dLat / 2).pow(2.0) +
+                        cos(fromLat) * cos(toLat) * sin(dLng / 2).pow(2.0)
             )
         )
     }
 
     /**
-     * Returns the distance between two LatLngs, in meters.
+     * Returns the distance between two LatitudeLongitudes, in meters.
      */
     fun computeDistanceBetween(from: LatLng, to: LatLng): Double {
         return computeAngleBetween(from, to) * EARTH_RADIUS

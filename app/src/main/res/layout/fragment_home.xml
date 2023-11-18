@@ -38,7 +38,7 @@
                 android:id="@+id/time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time"
+                android:text="@string/time_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_timer_24"
@@ -48,7 +48,7 @@
                 android:id="@+id/time_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="00:00"
+                android:text="@string/time_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Distance"
+                android:text="@string/distance_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_square_foot_24"
@@ -78,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 km"
+                android:text="@string/distance_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Avg velocity"
+                android:text="@string/avg_velocity_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_medium_24"
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 km/h"
+                android:text="@string/avg_velocity_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -135,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Max velocity"
+                android:text="@string/max_velocity_text"
                 android:textAlignment="center"
                 android:drawablePadding="8dp"
                 app:drawableStartCompat="@drawable/ic_baseline_speedometer_fast_24"
@@ -146,7 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 km/h"
+                android:text="@string/max_velocity_value"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textColor="@color/purple_500" />
@@ -169,7 +169,7 @@
             android:id="@+id/chart_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Velocity (km/h) vs Time (mm:ss)"
+            android:text="@string/chart_title"
             android:textAlignment="center"
             android:textSize="20sp" />
 
@@ -180,8 +180,7 @@
 
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -197,26 +196,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:contentDescription="@string/start_button"
             android:src="@drawable/ic_baseline_play_arrow_24"
             app:backgroundTint="@color/purple_500"
             app:layout_constraintBottom_toBottomOf="@id/guideline_button"
-            app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:tint="#FFFFFF" />
+            app:layout_constraintTop_toBottomOf="@id/guideline_button"
+            app:tint="#FFFFFF"
+            tools:ignore="DuplicateClickableBoundsCheck" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/stop_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:contentDescription="@string/stop_button"
             android:src="@drawable/ic_baseline_stop_24"
             app:backgroundTint="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/guideline_button"
-            app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:tint="#FFFFFF" />
+            app:layout_constraintTop_toBottomOf="@id/guideline_button"
+            app:tint="#FFFFFF"
+            tools:ignore="DuplicateClickableBoundsCheck"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
