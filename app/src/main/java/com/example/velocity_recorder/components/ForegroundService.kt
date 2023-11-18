@@ -55,15 +55,12 @@ class ForegroundService : Service() {
         locationProvider = LocationProvider(locationManager, dataDao, ::onChangeHandler, {})
 
         locationProvider.setPrevData(locationInitData)
-
         locationProvider.subscribe()
 
         startForeground(
             NotificationUtils.VELOCITY_RECORDER_NOTIFICATION_ID,
             NotificationUtils.getNotification(this)
         )
-
-        wakeLock.acquire(TimeUnit.MINUTES.toMillis(2))
 
         return START_STICKY
     }
@@ -80,11 +77,10 @@ class ForegroundService : Service() {
     }
 
     private fun onChangeHandler(elapsedTime: Long, distance: Double, velocity: Double) {
-//        checkAndUpdateCPUWake()
+        checkAndUpdateCPUWake()
     }
 
     private fun checkAndUpdateCPUWake() {
-        Log.d("AppLog", "service onChange with wakelock ${wakeLock.isHeld}")
         if (wakeLock.isHeld.not()) {
             wakeLock.acquire(TimeUnit.HOURS.toMillis(1))
         }
