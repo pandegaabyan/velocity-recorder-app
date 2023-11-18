@@ -44,6 +44,8 @@ data class RideItemData(
 
     fun getMaxVelocity() = ConversionUtils.getVelocityKmHr(maxVelocity)
 
+    fun getMaxVelocityNumber() = maxVelocity
+
     fun getAvgVelocity() =
         ConversionUtils.getVelocityKmHr(distance.toDouble() / getDuration())
 

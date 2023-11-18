@@ -55,7 +55,8 @@ class HistoryFragment : Fragment() {
             rideItemData.getTotalTime(),
             rideItemData.getTotalDistance(),
             rideItemData.getAvgVelocity(),
-            rideItemData.getMaxVelocity()
+            rideItemData.getMaxVelocity(),
+            rideItemData.getMaxVelocityNumber()
         )
     }
 }

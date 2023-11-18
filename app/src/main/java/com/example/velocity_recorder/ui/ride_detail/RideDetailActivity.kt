@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.velocity_recorder.databinding.ActivityRideDetailBinding
 import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.ui.chart.LineChartView
+import com.example.velocity_recorder.utils.ConversionUtils
 import com.example.velocity_recorder.utils.DialogUtils
 
 class RideDetailActivity: AppCompatActivity() {
@@ -33,6 +34,7 @@ class RideDetailActivity: AppCompatActivity() {
         rideId = intent.getLongExtra("ride_id", -1L)
 
         // set ride data ui based on selected item in history
+        var maxVelocityNumber: Double = 0.0
         try {
             viewBinding.startText.text = intent.getStringExtra("start_text")!!
             viewBinding.endText.text = intent.getStringExtra("end_text")!!
@@ -40,6 +42,8 @@ class RideDetailActivity: AppCompatActivity() {
             viewBinding.distanceValue.text = intent.getStringExtra("distance_value")!!
             viewBinding.avgVelocityValue.text = intent.getStringExtra("avg_velocity_value")!!
             viewBinding.maxVelocityValue.text = intent.getStringExtra("max_velocity_value")!!
+
+            maxVelocityNumber = intent.getDoubleExtra("max_velocity_number", 0.0)
         } catch (npe: NullPointerException) {
             Log.d("AppLog", "failed to get ride data, npe: ${npe.toString()}")
         }
@@ -53,6 +57,7 @@ class RideDetailActivity: AppCompatActivity() {
 
         lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
+        lineChartView.setMaxLeftAxis(ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat() * 1.2f)
 
     }
 
@@ -102,7 +107,8 @@ class RideDetailActivity: AppCompatActivity() {
                  timeValue: String,
                  distanceValue: String,
                  avgVelocityValue: String,
-                 maxVelocityValue: String
+                 maxVelocityValue: String,
+                 maxVelocityNumber: Double
         ) {
             val intent = Intent(context, RideDetailActivity::class.java).also {
                 it.putExtra("ride_id", rideId)
@@ -112,6 +118,7 @@ class RideDetailActivity: AppCompatActivity() {
                 it.putExtra("distance_value", distanceValue)
                 it.putExtra("avg_velocity_value", avgVelocityValue)
                 it.putExtra("max_velocity_value", maxVelocityValue)
+                it.putExtra("max_velocity_number", maxVelocityNumber)
             }
             context.startActivity(intent)
         }

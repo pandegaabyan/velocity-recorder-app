@@ -14,11 +14,7 @@ class LineChartView(
     private val lineChart: LineChart
 ) {
     fun setupChart() {
-        lineChart.description = Description().apply {
-            text = "Velocity (km/h) vs Time (mm:ss)"
-            textColor = Color.RED
-            textSize = 16f
-        }
+        lineChart.clear()
         lineChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
             labelCount = 5
@@ -34,13 +30,13 @@ class LineChartView(
         }
         lineChart.axisLeft.apply {
             axisMinimum = 0f
-            axisMaximum = 60f
             setDrawGridLines(true)
             setDrawAxisLine(false)
             textSize = 12f
             textColor = Color.BLUE
         }
         lineChart.axisRight.isEnabled = false
+        lineChart.description.isEnabled = false
         lineChart.legend.isEnabled = false
         lineChart.setTouchEnabled(false)
     }
