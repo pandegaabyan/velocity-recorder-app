@@ -12,9 +12,13 @@ import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.utils.NotificationUtils
 import java.util.concurrent.TimeUnit
 
-private const val WAKELOCK_INTERVAL_SECONDS = 600L
+private const val WAKELOCK_INTERVAL_SECONDS = 300L
+private const val CHECK_INTERVAL_SECONDS = 300L
 
 class ForegroundService : Service() {
+
+    private var prevCheckedElapsedTime: Long = 0
+    private var prevCheckedDistance: Int = 0
 
     private lateinit var locationManager: LocationManager
     private lateinit var locationProvider: LocationProvider
@@ -67,17 +71,28 @@ class ForegroundService : Service() {
     }
 
     override fun onDestroy() {
-
-        locationProvider.unsubscribe(false)
-
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-        }
+        stopService(false)
 
         super.onDestroy()
     }
 
+    private fun stopService(isDone: Boolean) {
+        locationProvider.unsubscribe(isDone)
+
+        if (wakeLock.isHeld) {
+            wakeLock.release()
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
     private fun onChangeHandler(elapsedTime: Long, distance: Double, velocity: Double) {
+        if (elapsedTime - prevCheckedElapsedTime > CHECK_INTERVAL_SECONDS) {
+            if (prevCheckedDistance == distance.toInt()) {
+                stopService(true)
+            }
+            prevCheckedElapsedTime = elapsedTime
+            prevCheckedDistance = distance.toInt()
+        }
         checkAndUpdateCPUWake()
     }
 
