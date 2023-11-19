@@ -26,6 +26,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
+private const val FRESH_THRESHOLD_MILLIS = 300000
+
 class HomeFragment : Fragment() {
 
     private var isRunning = false
@@ -152,7 +154,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             dataDao.getRunningRide().let { rideEntity ->
                 val isFresh = if (rideEntity != null) {
-                    System.currentTimeMillis() - rideEntity.endTime < 60000
+                    System.currentTimeMillis() - rideEntity.endTime < FRESH_THRESHOLD_MILLIS
                 } else {
                     null
                 }
