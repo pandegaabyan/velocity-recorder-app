@@ -54,7 +54,7 @@ class LineChartView(
         dataSet.circleRadius = 1f
         dataSet.setDrawCircleHole(false)
         dataSet.setDrawValues(false)
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+        dataSet.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
 
         // Update the line chart
         lineChart.data = LineData(dataSet)
