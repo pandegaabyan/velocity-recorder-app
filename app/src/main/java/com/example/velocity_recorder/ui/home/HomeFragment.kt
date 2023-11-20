@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 private const val FRESH_THRESHOLD_MILLIS = 300000
+private const val CHECK_PREV_STATE_DELAY_MILLIS = 1000L
 
 class HomeFragment : Fragment() {
 
@@ -107,7 +108,9 @@ class HomeFragment : Fragment() {
 
         ForegroundService.stopService(requireContext())
 
-        checkAndContinuePrevState()
+        viewLifecycleOwner.lifecycleScope.launch {
+            checkAndContinuePrevState()
+        }
     }
 
     override fun onStop() {
@@ -143,60 +146,57 @@ class HomeFragment : Fragment() {
                 requireContext(),
                 locationPrevData.rideId,
                 locationPrevData.startTime,
+                locationPrevData.distance,
                 locationPrevData.maxVelocity,
-                locationPrevData.startLatitude,
-                locationPrevData.startLongitude
+                locationPrevData.lastLatitude,
+                locationPrevData.lastLongitude
             )
         }
     }
 
-    private fun checkAndContinuePrevState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            dataDao.getRunningRide().let { rideEntity ->
-                val isFresh = if (rideEntity != null) {
-                    System.currentTimeMillis() - rideEntity.endTime < FRESH_THRESHOLD_MILLIS
-                } else {
-                    null
-                }
-                val rideId = rideEntity?.id
-                if (rideId != null && isFresh == true) {
-                    viewBinding.velocityValue.text = getString(R.string.loading)
-                    delay(1000)
-                    dataDao.getVelocities(rideId).let { velocityList ->
-                        val firstItem = velocityList.getOrNull(0)
-                        if (firstItem != null) {
-                            locationProvider.setPrevData(
-                                LocationInitData(
-                                    rideId,
-                                    rideEntity.startTime,
-                                    rideEntity.maxVelocity,
-                                    firstItem.latitude,
-                                    firstItem.longitude
-                                )
-                            )
-                            velocityEntries.clear()
-                            velocityEntries.addAll(velocityList.map {
-                                Entry(
-                                    (it.timestamp - velocityList[0].timestamp).toFloat(),
-                                    ConversionUtils.convertMeterSecToKmHr(it.velocity).toFloat()
-                                )
-                            })
-                            lineChartView.setData(velocityEntries, "Velocity Data")
-                            onMaxVelocityChangeHandler(rideEntity.maxVelocity)
-                            startRide(false)
-                        } else {
-                            viewBinding.startBtn.show()
-                        }
-                    }
-                } else {
-                    viewBinding.startBtn.show()
-
-                    if (isFresh == false) {
-                        dataDao.stopRunningRide()
-                    }
-                }
-            }
+    private suspend fun checkAndContinuePrevState() {
+        val rideId = dataDao.getRunningRide()?.id
+        if (rideId == null) {
+            viewBinding.startBtn.show()
+            return
         }
+
+        viewBinding.velocityValue.text = getString(R.string.loading)
+        delay(CHECK_PREV_STATE_DELAY_MILLIS)
+
+        val rideEntity = dataDao.getRunningRide()
+        rideEntity!!
+
+        if (System.currentTimeMillis() - rideEntity.endTime > FRESH_THRESHOLD_MILLIS) {
+            viewBinding.startBtn.show()
+            dataDao.stopRunningRide()
+            return
+        }
+
+        val velocityList = dataDao.getVelocities(rideId)
+
+        locationProvider.setPrevData(
+            LocationInitData(
+                rideId,
+                rideEntity.startTime,
+                rideEntity.distance.toDouble(),
+                rideEntity.maxVelocity,
+                velocityList.lastOrNull()?.latitude ?: 0.0,
+                velocityList.lastOrNull()?.longitude ?: 0.0,
+            )
+        )
+        onMaxVelocityChangeHandler(rideEntity.maxVelocity)
+
+        velocityEntries.clear()
+        velocityEntries.addAll(velocityList.map {velocityEntity ->
+            Entry(
+                (velocityEntity.timestamp - velocityList[0].timestamp).toFloat(),
+                ConversionUtils.convertMeterSecToKmHr(velocityEntity.velocity).toFloat()
+            )
+        })
+        lineChartView.setData(velocityEntries, "Velocity Data")
+
+        startRide(false)
     }
 
     private fun onChangeHandler(

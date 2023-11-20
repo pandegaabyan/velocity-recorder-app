@@ -28,8 +28,8 @@ class LocationProvider(
     private var firstChange = true
     private var lastUpdateRideTime: Long = 0
     private var startTime: Long = 0
-    private var startLatitude: Double = 0.0
-    private var startLongitude: Double = 0.0
+    private var prevLatitude: Double = 0.0
+    private var prevLongitude: Double = 0.0
 
     private var distance: Double = 0.0
     private var currentTime: Long = 0
@@ -43,8 +43,8 @@ class LocationProvider(
         firstChange = true
         lastUpdateRideTime = 0
         startTime = 0
-        startLatitude = 0.0
-        startLongitude = 0.0
+        prevLatitude = 0.0
+        prevLongitude = 0.0
         distance = 0.0
         currentTime = 0
         currentVelocity = 0.0
@@ -54,10 +54,11 @@ class LocationProvider(
     fun setPrevData(prevData: LocationInitData) {
         if (prevData.rideId != null && prevData.rideId != -1L) {
             rideId = prevData.rideId
-            maxVelocity = prevData.maxVelocity
             startTime = prevData.startTime
-            startLatitude = prevData.startLatitude
-            startLongitude = prevData.startLongitude
+            distance = prevData.distance
+            maxVelocity = prevData.maxVelocity
+            prevLatitude = prevData.lastLatitude
+            prevLongitude = prevData.lastLongitude
         }
     }
 
@@ -72,7 +73,7 @@ class LocationProvider(
             updateRideVelocityData(isDone)
         }
 
-        return LocationInitData(rideId, startTime, maxVelocity, startLatitude, startLongitude)
+        return LocationInitData(rideId, startTime, distance, maxVelocity, prevLatitude, prevLongitude)
     }
 
     override fun onLocationChanged(location: Location) {
@@ -83,10 +84,15 @@ class LocationProvider(
             firstChange = false
             lastUpdateRideTime = currentTime
 
+            if (prevLatitude == 0.0) {
+                prevLatitude = location.latitude
+            }
+            if (prevLongitude == 0.0) {
+                prevLongitude = location.longitude
+            }
+
             if (rideId == null) {
                 startTime = currentTime
-                startLatitude = location.latitude
-                startLongitude = location.longitude
 
                 CoroutineScope(Dispatchers.IO).launch {
                     initializeRideData().let {
@@ -96,12 +102,13 @@ class LocationProvider(
             }
         }
 
-
         // Update total distance
-        distance = SphericalUtils.computeDistanceBetween(
-            LatLng(startLatitude, startLongitude),
+        distance += SphericalUtils.computeDistanceBetween(
+            LatLng(prevLatitude, prevLongitude),
             LatLng(location.latitude, location.longitude)
         )
+        prevLatitude = location.latitude
+        prevLongitude = location.longitude
 
         // Update max velocity and call onMaxVelocityChange
         if (currentVelocity > maxVelocity) {

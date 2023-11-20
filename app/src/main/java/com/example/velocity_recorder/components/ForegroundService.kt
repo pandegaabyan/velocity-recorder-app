@@ -50,9 +50,10 @@ class ForegroundService : Service() {
         val locationInitData = LocationInitData(
             intent.getLongExtra("ride_id", -1),
             intent.getLongExtra("start_time", 0),
+            intent.getDoubleExtra("distance", 0.0),
             intent.getDoubleExtra("max_velocity", 0.0),
-            intent.getDoubleExtra("start_latitude", 0.0),
-            intent.getDoubleExtra("start_longitude", 0.0)
+            intent.getDoubleExtra("last_latitude", 0.0),
+            intent.getDoubleExtra("last_longitude", 0.0),
         )
 
         locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -107,16 +108,18 @@ class ForegroundService : Service() {
             context: Context,
             rideId: Long,
             startTime: Long,
+            distance: Double,
             maxVelocity: Double,
-            startLatitude: Double,
-            startLongitude: Double
+            lastLatitude: Double,
+            lastLongitude: Double
         ) {
             val startIntent = Intent(context, ForegroundService::class.java)
             startIntent.putExtra("ride_id", rideId)
             startIntent.putExtra("start_time", startTime)
+            startIntent.putExtra("distance", distance)
             startIntent.putExtra("max_velocity", maxVelocity)
-            startIntent.putExtra("start_latitude", startLatitude)
-            startIntent.putExtra("start_longitude", startLongitude)
+            startIntent.putExtra("last_latitude", lastLatitude)
+            startIntent.putExtra("last_longitude", lastLongitude)
             ContextCompat.startForegroundService(context, startIntent)
         }
 
