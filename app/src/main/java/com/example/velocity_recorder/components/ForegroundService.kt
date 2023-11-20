@@ -10,10 +10,9 @@ import android.os.PowerManager.PARTIAL_WAKE_LOCK
 import androidx.core.content.ContextCompat
 import com.example.velocity_recorder.db.AppDatabase
 import com.example.velocity_recorder.utils.NotificationUtils
-import java.util.concurrent.TimeUnit
 
-private const val WAKELOCK_INTERVAL_SECONDS = 300L
-private const val CHECK_INTERVAL_SECONDS = 300L
+private const val WAKELOCK_INTERVAL_MILLIS = 300000L
+private const val CHECK_INTERVAL_MILLIS = 300000
 
 class ForegroundService : Service() {
 
@@ -86,9 +85,10 @@ class ForegroundService : Service() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun onChangeHandler(elapsedTime: Long, distance: Double, velocity: Double) {
-        if (elapsedTime - prevCheckedElapsedTime > CHECK_INTERVAL_SECONDS) {
+        if (elapsedTime - prevCheckedElapsedTime > CHECK_INTERVAL_MILLIS) {
             if (prevCheckedDistance == distance.toInt()) {
                 stopService(true)
+                return
             }
             prevCheckedElapsedTime = elapsedTime
             prevCheckedDistance = distance.toInt()
@@ -98,7 +98,7 @@ class ForegroundService : Service() {
 
     private fun checkAndUpdateCPUWake() {
         if (wakeLock.isHeld.not()) {
-            wakeLock.acquire(TimeUnit.SECONDS.toMillis(WAKELOCK_INTERVAL_SECONDS))
+            wakeLock.acquire(WAKELOCK_INTERVAL_MILLIS)
         }
     }
 
