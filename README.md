@@ -56,13 +56,13 @@ recorded data is stored so that it can be accessed from the History view.
 
 ## Views
 
-|                                 Dashboard View                                  |                                History View                                |
-|:-------------------------------------------------------------------------------:|:--------------------------------------------------------------------------:|
-| ![GIF of dashboard view when recording velocities](.\attachments\dashboard.gif) | ![GIF of history view with its functionalities](.\attachments\history.gif) |
+|                                Dashboard View                                 |                               History View                               |
+|:-----------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+| ![GIF of dashboard view when recording velocities](attachments/dashboard.gif) | ![GIF of history view with its functionalities](attachments/history.gif) |
 
-| Example CSV File - [check the file here](.\attachments\ride%20%2314%20-%202023-11-20T16-45-09%20to%202023-11-20T16-51-17.csv) |
-|-------------------------------------------------------------------------------------------------------------------------------|
-| ![Screenshot of example CSV file](.\attachments\screenshot-csv.png)                                                           |
+| Example CSV File - [check the file here](attachments/ride%20%2314%20-%202023-11-20T16-45-09%20to%202023-11-20T16-51-17.csv) |
+|-----------------------------------------------------------------------------------------------------------------------------|
+| ![Screenshot of example CSV file](attachments/screenshot-csv.png)                                                           |
 
 ## Credits
 
