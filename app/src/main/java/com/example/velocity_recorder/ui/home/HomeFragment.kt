@@ -188,7 +188,7 @@ class HomeFragment : Fragment() {
         onMaxVelocityChangeHandler(rideEntity.maxVelocity)
 
         velocityEntries.clear()
-        velocityEntries.addAll(velocityList.map {velocityEntity ->
+        velocityEntries.addAll(velocityList.map { velocityEntity ->
             Entry(
                 (velocityEntity.timestamp - velocityList[0].timestamp).toFloat(),
                 ConversionUtils.convertMeterSecToKmHr(velocityEntity.velocity).toFloat()

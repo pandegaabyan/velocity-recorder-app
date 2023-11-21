@@ -73,7 +73,14 @@ class LocationProvider(
             updateRideVelocityData(isDone)
         }
 
-        return LocationInitData(rideId, startTime, distance, maxVelocity, prevLatitude, prevLongitude)
+        return LocationInitData(
+            rideId,
+            startTime,
+            distance,
+            maxVelocity,
+            prevLatitude,
+            prevLongitude
+        )
     }
 
     override fun onLocationChanged(location: Location) {
