@@ -54,7 +54,12 @@ recorded data is stored so that it can be accessed from the History view.
 - Delete a ride data by clicking the delete icon
 - Export a ride data by clicking the export icon
 
-## Views
+## Attachments
+
+
+| Connections between Components                                                           |
+|------------------------------------------------------------------------------------------|
+| ![Diagram of connections between app components](attachments/components-connections.png) |
 
 |                                Dashboard View                                 |                               History View                               |
 |:-----------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
