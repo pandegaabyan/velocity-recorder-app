@@ -1,0 +1,13 @@
+Velocity Recorder
+Copyright 2023 Pandega Abyan Zumarsyah
+
+This product includes codes from Topsed-Speedometer (Apache 2.0)
+    * Copyright 2022 Prasanna Anbazhagan
+    * https://github.com/praslnx8/Topsed-Speedometer
+    * The codes are used in some files with some modifications:
+    * DialogUtils, LocationPermissionUtils, NotificationUtils, and Permission Check Activity
+
+This product uses library MPAndroidChart (Apache 2.0)
+    * Copyright 2014-2019 Philipp Jahoda and the library contributors
+    * https://github.com/PhilJay/MPAndroidChart
+    * The library is used to create line chart
