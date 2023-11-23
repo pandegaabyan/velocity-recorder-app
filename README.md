@@ -39,6 +39,7 @@ recorded data is stored so that it can be accessed from the History view.
 
 - Device: Android 7.0 (Nougat) or later with GPS sensor
 - Permission: Location, Foreground Service, Wake Lock
+- For working properly in the background, user may need to disable restriction related to battery saving or something like that
 
 ## Usage
 
