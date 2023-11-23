@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.velocity_recorder"
+    namespace = "com.paz.velocity_recorder"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.velocity_recorder"
+        applicationId = "com.paz.velocity_recorder"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

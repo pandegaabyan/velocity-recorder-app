@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.paz.velocity_recorder">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -34,6 +35,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".components.PermissionCheckActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppDialogActivityTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".components.ExportDataActivity" />
