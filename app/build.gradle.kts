@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -16,6 +18,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val projectProperties = readProperties(file("../app.properties"))
+
+        resValue("string", "google_maps_key", projectProperties["GOOGLE_MAPS_API_KEY"] as String)
     }
 
     buildTypes {
@@ -36,6 +42,12 @@ android {
     }
     buildFeatures {
         viewBinding = true
+    }
+}
+
+fun readProperties(propertiesFile: File) = Properties().apply {
+    propertiesFile.inputStream().use { fis ->
+        load(fis)
     }
 }
 
