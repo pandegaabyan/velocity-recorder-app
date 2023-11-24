@@ -17,7 +17,6 @@
 package com.paz.velocity_recorder.utils
 
 import android.util.Log
-import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -50,7 +49,10 @@ object ParallelUtils {
         try {
             executorService.awaitTermination(1, TimeUnit.SECONDS)
         } catch (e: InterruptedException) {
-            Log.d("AppLog", "failed to execute parallel service, InterruptedException: ${e.stackTrace}")
+            Log.d(
+                "AppLog",
+                "failed to execute parallel service, InterruptedException: ${e.stackTrace}"
+            )
         }
     }
 }

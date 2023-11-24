@@ -46,8 +46,8 @@ class MapPolylineCreator {
                 velocity = entity.velocity,
                 latitude = entity.latitude,
                 longitude = entity.longitude,
-                nextLatitude = velocities.getOrNull(index+1)?.latitude,
-                nextLongitude = velocities.getOrNull(index+1)?.longitude,
+                nextLatitude = velocities.getOrNull(index + 1)?.latitude,
+                nextLongitude = velocities.getOrNull(index + 1)?.longitude,
             )
         }
 
@@ -78,14 +78,17 @@ class MapPolylineCreator {
         maxVelocity: Double,
         velocityInMetrePerSecond: Double
     ): Int {
-        val percentage = if (maxVelocity > 0) (velocityInMetrePerSecond / maxVelocity) * 100 else 100.0
+        val percentage =
+            if (maxVelocity > 0) (velocityInMetrePerSecond / maxVelocity) * 100 else 100.0
         return when {
             percentage < 33 -> {
                 R.color.polyline_low
             }
+
             percentage < 66 -> {
                 R.color.polyline_medium
             }
+
             else -> {
                 R.color.polyline_high
             }

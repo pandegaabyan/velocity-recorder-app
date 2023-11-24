@@ -227,7 +227,7 @@ class RideDetailActivity : AppCompatActivity() {
                 googleMap?.addPolyline(polylineOptions)
             }
         } catch (e: Exception) {
-            Log.d("AppLog", "failed to plot paths in map, ${e}: ${e.stackTrace}")
+            Log.d("AppLog", "failed to plot route in map, ${e}: ${e.stackTrace}")
         }
     }
 

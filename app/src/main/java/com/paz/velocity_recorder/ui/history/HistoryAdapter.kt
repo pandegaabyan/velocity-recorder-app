@@ -25,7 +25,13 @@ class HistoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_ride, parent, false)
-        return RideItemViewHolder(view, itemClickCallback, exportRideCallback, deleteRideCallback, updateLocalityCallback)
+        return RideItemViewHolder(
+            view,
+            itemClickCallback,
+            exportRideCallback,
+            deleteRideCallback,
+            updateLocalityCallback
+        )
     }
 
     override fun getItemCount() = rideItemList.size

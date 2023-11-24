@@ -1,6 +1,10 @@
 package com.paz.velocity_recorder.ui_model
 
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.paz.velocity_recorder.utils.ConversionUtils
 import com.paz.velocity_recorder.utils.SphericalUtils
 

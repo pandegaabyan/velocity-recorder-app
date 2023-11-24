@@ -48,8 +48,10 @@ class HistoryViewModel(
             val firstEntity = velocityEntities.firstOrNull()
             val lastEntity = velocityEntities.lastOrNull()
             if (firstEntity != null && lastEntity != null) {
-                val startLocality = localityCollector.getLocalityInfo(firstEntity.latitude, firstEntity.longitude)
-                val endLocality = localityCollector.getLocalityInfo(lastEntity.latitude, lastEntity.longitude)
+                val startLocality =
+                    localityCollector.getLocalityInfo(firstEntity.latitude, firstEntity.longitude)
+                val endLocality =
+                    localityCollector.getLocalityInfo(lastEntity.latitude, lastEntity.longitude)
                 if (startLocality != null && endLocality != null) {
                     dataDao.updateRideLocality(rideId, startLocality, endLocality)
                 }
@@ -57,7 +59,10 @@ class HistoryViewModel(
         }
     }
 
-    class Factory(private val dataDao: DataDao, private val localityCollector: LocalityInfoCollector) : ViewModelProvider.Factory {
+    class Factory(
+        private val dataDao: DataDao,
+        private val localityCollector: LocalityInfoCollector
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return HistoryViewModel(dataDao, localityCollector) as T

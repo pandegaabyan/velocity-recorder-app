@@ -29,11 +29,12 @@ class RideItemViewHolder(
             View.GONE
         }
 
-        viewBinding.updateLocalityIcon.visibility = if (!rideItemData.isLocalityNull() || rideItemData.isRunning()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
+        viewBinding.updateLocalityIcon.visibility =
+            if (!rideItemData.isLocalityNull() || rideItemData.isRunning()) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
 
         viewBinding.tagText.text = rideItemData.getStartEndText()
         viewBinding.timeText.text = rideItemData.getTimeText()
