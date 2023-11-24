@@ -9,8 +9,8 @@ import com.paz.velocity_recorder.utils.DialogUtils
 class RideItemViewHolder(
     itemView: View,
     private val itemClickCallback: (rideItemData: RideItemData) -> Unit,
-    private val exportItemCallback: (rideItemData: RideItemData) -> Unit,
-    private val deleteItemCallback: (rideId: Long) -> Unit,
+    private val exportRideCallback: (rideItemData: RideItemData) -> Unit,
+    private val deleteRideCallback: (rideId: Long) -> Unit,
     private val updateLocalityCallback: (rideId: Long) -> Unit,
 ) : RecyclerView.ViewHolder(itemView) {
 
@@ -42,7 +42,7 @@ class RideItemViewHolder(
         viewBinding.distanceText.text = rideItemData.getTotalDistance()
 
         viewBinding.exportIcon.setOnClickListener {
-            exportItemCallback(rideItemData)
+            exportRideCallback(rideItemData)
         }
 
         viewBinding.deleteIcon.setOnClickListener {
@@ -52,7 +52,7 @@ class RideItemViewHolder(
                 positiveAction = "Delete",
                 negativeAction = "Cancel",
                 onSuccessAction = {
-                    deleteItemCallback(rideItemData.getRideId())
+                    deleteRideCallback(rideItemData.getRideId())
                 },
                 onNegativeAction = {}
             ).show()
