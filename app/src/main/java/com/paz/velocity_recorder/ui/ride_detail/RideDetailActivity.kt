@@ -8,15 +8,24 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
+import com.paz.velocity_recorder.R
 import com.paz.velocity_recorder.components.ExportDataActivity
 import com.paz.velocity_recorder.components.LocalityInfoCollector
 import com.paz.velocity_recorder.databinding.ActivityRideDetailBinding
 import com.paz.velocity_recorder.db.AppDatabase
 import com.paz.velocity_recorder.ui.chart.LineChartView
+import com.paz.velocity_recorder.ui_model.RideMapData
 import com.paz.velocity_recorder.utils.ConversionUtils
 import com.paz.velocity_recorder.utils.DialogUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.paz.velocity_recorder.utils.observeOnce
 import kotlinx.coroutines.launch
 
 class RideDetailActivity : AppCompatActivity() {
@@ -24,9 +33,12 @@ class RideDetailActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityRideDetailBinding
     private lateinit var lineChartView: LineChartView
 
+    private var googleMap: GoogleMap? = null
+
     private var rideId: Long = -1L
     private var startText: String = ""
     private var endText: String = ""
+    private var isMapHybrid = false
 
     private val dataDao by lazy { AppDatabase.getDatabase(this).dataDao() }
     private val localityCollector by lazy { LocalityInfoCollector(this) }
@@ -40,6 +52,8 @@ class RideDetailActivity : AppCompatActivity() {
 
         viewBinding = ActivityRideDetailBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        viewBinding.mapView.onCreate(savedInstanceState)
 
         rideId = intent.getLongExtra("ride_id", -1L)
 
@@ -76,19 +90,34 @@ class RideDetailActivity : AppCompatActivity() {
         viewBinding.updateLocalityIcon.setOnClickListener {
             updateLocality()
         }
+        viewBinding.mapTypeButton.setOnClickListener {
+            isMapHybrid = !isMapHybrid
+            setMapType()
+        }
 
         lineChartView = LineChartView(viewBinding.lineChart)
         lineChartView.setupChart()
         lineChartView.setMaxLeftAxis(
             ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat()
         )
-
     }
 
     override fun onStart() {
         super.onStart()
 
         setChartData()
+
+        viewBinding.loadingMapLayout.visibility = View.VISIBLE
+        viewBinding.mapView.getMapAsync { googleMap ->
+            this.googleMap = googleMap
+            googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style_normal)
+            )
+            viewModel.getLiveRideMapData(rideId).observeOnce(this) {
+                viewBinding.loadingMapLayout.visibility = View.GONE
+                handleMapOperations(it)
+            }
+        }
     }
 
     private fun setChartData() {
@@ -147,6 +176,107 @@ class RideDetailActivity : AppCompatActivity() {
                 viewBinding.loadingSign.visibility = View.GONE
             }
         }
+    }
+
+    private fun handleMapOperations(rideMapData: RideMapData) {
+        googleMap?.clear()
+        plotRoute(rideMapData.getMapPolyLineOptionList())
+        plotMarkers(
+            rideMapData.getStartPointMarker(),
+            rideMapData.getEndPointMarker(),
+            rideMapData.getMaxVelocityPointMarker()
+        )
+        moveGoogleMap(
+            rideMapData.getLatLngBounds(),
+            rideMapData.getLatLngToZoom(),
+            rideMapData.getHeading()
+        )
+        setMapType()
+    }
+
+    private fun setMapType() {
+        if (isMapHybrid) {
+            googleMap?.mapType = GoogleMap.MAP_TYPE_HYBRID
+        } else {
+            googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+        }
+    }
+
+    private fun plotMarkers(
+        startPointMarkerOptions: MarkerOptions?,
+        endPointMarkerOptions: MarkerOptions?,
+        maxVelocityMarkerOptions: MarkerOptions?
+    ) {
+
+        if (startPointMarkerOptions != null) {
+            googleMap?.addMarker(startPointMarkerOptions)
+        }
+
+        if (endPointMarkerOptions != null) {
+            googleMap?.addMarker(endPointMarkerOptions)
+        }
+
+        if (maxVelocityMarkerOptions != null) {
+            googleMap?.addMarker(maxVelocityMarkerOptions)
+        }
+    }
+
+    private fun plotRoute(polylineOptionsList: List<PolylineOptions>) {
+        try {
+            for (polylineOptions in polylineOptionsList) {
+                googleMap?.addPolyline(polylineOptions)
+            }
+        } catch (e: Exception) {
+            Log.d("AppLog", "failed to plot paths in map, ${e}: ${e.stackTrace}")
+        }
+    }
+
+    private fun moveGoogleMap(latLngBounds: LatLngBounds?, latLngToZoom: LatLng?, heading: Double) {
+        try {
+            latLngBounds?.let {
+                val cameraUpdate =
+                    CameraUpdateFactory.newLatLngBounds(latLngBounds, 180)
+                googleMap?.moveCamera(cameraUpdate)
+            } ?: let {
+                latLngToZoom?.let {
+                    val cameraUpdateFactory = CameraUpdateFactory.newLatLngZoom(latLngToZoom, 16f)
+                    googleMap?.moveCamera(cameraUpdateFactory)
+                }
+            }
+            googleMap?.cameraPosition?.let {
+                val cameraPosition =
+                    CameraPosition.builder(it)
+                        .bearing(heading.toFloat()).build()
+                googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            }
+        } catch (e: Exception) {
+            Log.d("AppLog", "failed to move map camera, ${e}: ${e.stackTrace}")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewBinding.mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewBinding.mapView.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewBinding.mapView.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        viewBinding.mapView.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewBinding.mapView.onDestroy()
     }
 
     companion object {
