@@ -11,10 +11,19 @@ data class RideItemData(
     private val maxVelocity: Double,
     private val distance: Int,
     private val startTime: Long,
-    private val endTime: Long
+    private val endTime: Long,
+    private val isRunning: Boolean
 ) {
 
     private fun getDuration() = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
+
+    fun isRunning(): Boolean {
+        return isRunning
+    }
+
+    fun isLocalityNull(): Boolean {
+        return startLocality == null || endLocality == null
+    }
 
     fun getStartText(): String {
         if (startLocality != null && endLocality != null) {

@@ -10,12 +10,30 @@ class RideItemViewHolder(
     itemView: View,
     private val itemClickCallback: (rideItemData: RideItemData) -> Unit,
     private val exportItemCallback: (rideItemData: RideItemData) -> Unit,
-    private val deleteItemCallback: (rideId: Long) -> Unit
+    private val deleteItemCallback: (rideId: Long) -> Unit,
+    private val updateLocalityCallback: (rideId: Long) -> Unit,
 ) : RecyclerView.ViewHolder(itemView) {
 
     fun renderData(rideItemData: RideItemData) {
 
         val viewBinding = ItemRideBinding.bind(itemView)
+
+        if (rideItemData.isRunning()) {
+            viewBinding.exportIcon.visibility = View.GONE
+            viewBinding.deleteIcon.visibility = View.GONE
+        }
+
+        viewBinding.loadingSign.visibility = if (rideItemData.isRunning()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
+        viewBinding.updateLocalityIcon.visibility = if (!rideItemData.isLocalityNull() || rideItemData.isRunning()) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
 
         viewBinding.tagText.text = rideItemData.getStartEndText()
         viewBinding.timeText.text = rideItemData.getTimeText()
@@ -40,8 +58,16 @@ class RideItemViewHolder(
             ).show()
         }
 
+        viewBinding.updateLocalityIcon.setOnClickListener {
+            viewBinding.updateLocalityIcon.visibility = View.GONE
+            viewBinding.loadingSign.visibility = View.VISIBLE
+            updateLocalityCallback(rideItemData.getRideId())
+        }
+
         viewBinding.mainLayout.setOnClickListener {
-            itemClickCallback(rideItemData)
+            if (!rideItemData.isRunning()) {
+                itemClickCallback(rideItemData)
+            }
         }
     }
 

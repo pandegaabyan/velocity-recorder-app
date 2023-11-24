@@ -19,13 +19,21 @@ interface DataDao {
     @Query("SELECT * FROM rides WHERE is_running ORDER BY created_at ASC LIMIT 1")
     suspend fun getRunningRide(): RideEntity?
 
-    @Query("UPDATE rides SET end_time = :endTime, distance = :distance, max_velocity = :maxVelocity, is_running = :isRunning WHERE id = :id")
+    @Query("UPDATE rides SET end_time = :endTime, distance = :distance, " +
+            "max_velocity = :maxVelocity, is_running = :isRunning WHERE id = :id")
     suspend fun updateRide(
         id: Long,
         endTime: Long,
         distance: Int,
         maxVelocity: Double,
         isRunning: Boolean = true
+    )
+
+    @Query("UPDATE rides SET start_locality = :startLocality, end_locality = :endLocality WHERE id = :id")
+    suspend fun updateRideLocality(
+        id: Long,
+        startLocality: String,
+        endLocality: String,
     )
 
     @Query("UPDATE rides SET is_running = 0 WHERE is_running")
@@ -47,4 +55,10 @@ interface DataDao {
 
     @Query("DELETE FROM velocities WHERE ride_id = :rideId")
     suspend fun deleteVelocities(rideId: Long)
+
+    @Query("SELECT * FROM (SELECT * FROM velocities WHERE ride_id = :rideId ORDER BY timestamp ASC LIMIT 1)" +
+            " UNION " +
+            "SELECT * FROM (SELECT * FROM velocities WHERE ride_id = :rideId ORDER BY timestamp DESC LIMIT 1)" +
+            "ORDER BY timestamp ASC")
+    suspend fun getStartEndVelocities(rideId: Long): List<VelocityEntity>
 }
