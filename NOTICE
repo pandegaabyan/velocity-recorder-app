@@ -5,7 +5,9 @@ This product includes codes from Topsed-Speedometer (Apache 2.0)
     * Copyright 2022 Prasanna Anbazhagan
     * https://github.com/praslnx8/Topsed-Speedometer
     * The codes are used in some files with some modifications:
-    * DialogUtils, LocationPermissionUtils, NotificationUtils, and Permission Check Activity
+    * utils files: extensions, DialogUtils, LocationPermissionUtils, NotificationUtils, ParallelUtils
+    * components files: LocalityInfoCollector and PermissionCheckActivity
+    * layout files: item_ride
 
 This product uses library MPAndroidChart (Apache 2.0)
     * Copyright 2014-2019 Philipp Jahoda and the library contributors
