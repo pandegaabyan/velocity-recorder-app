@@ -207,15 +207,12 @@ class RideDetailActivity : AppCompatActivity() {
         endPointMarkerOptions: MarkerOptions?,
         maxVelocityMarkerOptions: MarkerOptions?
     ) {
-
         if (startPointMarkerOptions != null) {
             googleMap?.addMarker(startPointMarkerOptions)
         }
-
         if (endPointMarkerOptions != null) {
             googleMap?.addMarker(endPointMarkerOptions)
         }
-
         if (maxVelocityMarkerOptions != null) {
             googleMap?.addMarker(maxVelocityMarkerOptions)
         }

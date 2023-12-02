@@ -9,12 +9,12 @@ import com.paz.velocity_recorder.utils.ConversionUtils
 import com.paz.velocity_recorder.utils.SphericalUtils
 
 data class RideMapData(
-    private val velocities: List<VelocitySimpleItemData>,
+    private val velocityDataList: List<VelocitySimpleItemData>,
     private val polylineOptionList: List<PolylineOptions>
 ) {
 
     fun getStartPointMarker(): MarkerOptions? {
-        return velocities.firstOrNull()?.let {
+        return velocityDataList.firstOrNull()?.let {
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
                 .icon(BitmapDescriptorFactory.defaultMarker(201f))
@@ -23,7 +23,7 @@ data class RideMapData(
     }
 
     fun getEndPointMarker(): MarkerOptions? {
-        return velocities.lastOrNull()?.let {
+        return velocityDataList.lastOrNull()?.let {
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
                 .icon(BitmapDescriptorFactory.defaultMarker(17f))
@@ -32,7 +32,7 @@ data class RideMapData(
     }
 
     fun getMaxVelocityPointMarker(): MarkerOptions? {
-        return velocities.maxByOrNull {
+        return velocityDataList.maxByOrNull {
             it.velocity
         }?.let {
             val maxVelocityString = "Max velocity: ${ConversionUtils.getVelocityKmHr(it.velocity)}"
@@ -44,19 +44,20 @@ data class RideMapData(
     }
 
     fun getLatLngBounds(): LatLngBounds? {
-        val startEntity = velocities.firstOrNull()
-        val endEntity = velocities.lastOrNull()
+        val startEntity = velocityDataList.firstOrNull()
+        val endEntity = velocityDataList.lastOrNull()
         if (startEntity != null && endEntity != null) {
             return LatLngBounds.Builder()
                 .include(LatLng(startEntity.latitude, startEntity.longitude))
-                .include(LatLng(endEntity.latitude, endEntity.longitude)).build()
+                .include(LatLng(endEntity.latitude, endEntity.longitude))
+                .build()
         }
 
         return null
     }
 
     fun getLatLngToZoom(): LatLng? {
-        val startEntity = velocities.firstOrNull()
+        val startEntity = velocityDataList.firstOrNull()
         if (startEntity != null) {
             return LatLng(startEntity.latitude, startEntity.longitude)
         }
@@ -65,8 +66,8 @@ data class RideMapData(
     }
 
     fun getHeading(): Double {
-        val startEntity = velocities.firstOrNull()
-        val endEntity = velocities.lastOrNull()
+        val startEntity = velocityDataList.firstOrNull()
+        val endEntity = velocityDataList.lastOrNull()
         if (startEntity != null && endEntity != null) {
             return SphericalUtils.computeHeading(
                 LatLng(startEntity.latitude, startEntity.longitude),
@@ -82,7 +83,7 @@ data class RideMapData(
 
     companion object {
         fun empty(): RideMapData = RideMapData(
-            velocities = emptyList(),
+            velocityDataList = emptyList(),
             polylineOptionList = emptyList()
         )
     }
