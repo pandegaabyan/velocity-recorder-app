@@ -17,7 +17,7 @@ import com.paz.velocity_recorder.components.LocationProvider
 import com.paz.velocity_recorder.components.PermissionCheckActivity
 import com.paz.velocity_recorder.databinding.FragmentHomeBinding
 import com.paz.velocity_recorder.db.AppDatabase
-import com.paz.velocity_recorder.ui.chart.LineChartView
+import com.paz.velocity_recorder.ui.chart.LineChartHandler
 import com.paz.velocity_recorder.utils.ClockUtils
 import com.paz.velocity_recorder.utils.ConversionUtils
 import com.paz.velocity_recorder.utils.DialogUtils
@@ -36,7 +36,7 @@ class HomeFragment : Fragment() {
     private lateinit var viewBinding: FragmentHomeBinding
     private lateinit var locationManager: LocationManager
     private lateinit var locationProvider: LocationProvider
-    private lateinit var lineChartView: LineChartView
+    private lateinit var lineChartHandler: LineChartHandler
 
     private val dataDao by lazy { AppDatabase.getDatabase(requireContext()).dataDao() }
 
@@ -65,8 +65,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lineChartView = LineChartView(viewBinding.lineChart)
-        lineChartView.setupChart()
+        lineChartHandler = LineChartHandler(viewBinding.lineChart)
+        lineChartHandler.setupChart()
 
         locationManager =
             requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -127,7 +127,7 @@ class HomeFragment : Fragment() {
             onChangeHandler(0, 0.0, 0.0, false)
             onMaxVelocityChangeHandler(0.0, false)
             velocityEntries.clear()
-            lineChartView.clear()
+            lineChartHandler.clear()
         }
         locationProvider.subscribe()
         viewBinding.stopBtn.show()
@@ -194,7 +194,7 @@ class HomeFragment : Fragment() {
                 ConversionUtils.convertMeterSecToKmHr(velocityEntity.velocity).toFloat()
             )
         })
-        lineChartView.setData(velocityEntries, "Velocity Data")
+        lineChartHandler.setData(velocityEntries, "Velocity Data")
 
         startRide(false)
     }
@@ -225,7 +225,7 @@ class HomeFragment : Fragment() {
                     ConversionUtils.convertMeterSecToKmHr(velocity).toFloat()
                 )
             )
-            lineChartView.setData(velocityEntries, "Velocity Data")
+            lineChartHandler.setData(velocityEntries, "Velocity Data")
         }
     }
 
@@ -233,7 +233,7 @@ class HomeFragment : Fragment() {
         viewBinding.maxVelocityValue.text = ConversionUtils.getVelocityKmHr(maxVelocity)
 
         if (shouldUpdateChart) {
-            lineChartView.setMaxLeftAxis(
+            lineChartHandler.setMaxLeftAxis(
                 ConversionUtils.convertMeterSecToKmHr(maxVelocity).toFloat()
             )
         }

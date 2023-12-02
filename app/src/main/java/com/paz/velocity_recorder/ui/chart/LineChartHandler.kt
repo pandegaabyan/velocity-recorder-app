@@ -10,7 +10,7 @@ import com.paz.velocity_recorder.R
 import com.paz.velocity_recorder.utils.ClockUtils
 import java.util.concurrent.TimeUnit
 
-class LineChartView(
+class LineChartHandler(
     private val lineChart: LineChart
 ) {
     fun setupChart() {

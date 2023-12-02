@@ -22,7 +22,7 @@ import com.paz.velocity_recorder.components.ExportDataActivity
 import com.paz.velocity_recorder.components.LocalityInfoCollector
 import com.paz.velocity_recorder.databinding.ActivityRideDetailBinding
 import com.paz.velocity_recorder.db.AppDatabase
-import com.paz.velocity_recorder.ui.chart.LineChartView
+import com.paz.velocity_recorder.ui.chart.LineChartHandler
 import com.paz.velocity_recorder.ui_model.RideMapData
 import com.paz.velocity_recorder.utils.ClockUtils
 import com.paz.velocity_recorder.utils.ConversionUtils
@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 class RideDetailActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityRideDetailBinding
-    private lateinit var lineChartView: LineChartView
+    private lateinit var lineChartHandler: LineChartHandler
 
     private var googleMap: GoogleMap? = null
     private var mapDefaultCamera: CameraUpdate? = null
@@ -110,9 +110,9 @@ class RideDetailActivity : AppCompatActivity() {
             setMapType()
         }
 
-        lineChartView = LineChartView(viewBinding.lineChart)
-        lineChartView.setupChart()
-        lineChartView.setMaxLeftAxis(
+        lineChartHandler = LineChartHandler(viewBinding.lineChart)
+        lineChartHandler.setupChart()
+        lineChartHandler.setMaxLeftAxis(
             ConversionUtils.convertMeterSecToKmHr(maxVelocityNumber).toFloat()
         )
     }
@@ -140,7 +140,7 @@ class RideDetailActivity : AppCompatActivity() {
             return
         }
         viewModel.getLiveVelocities(rideId).observe(this) {
-            lineChartView.setData(it, "Velocity Data")
+            lineChartHandler.setData(it, "Velocity Data")
         }
     }
 
