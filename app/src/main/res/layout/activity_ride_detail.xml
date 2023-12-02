@@ -315,7 +315,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.gms.maps.MapView
+                <com.paz.velocity_recorder.ui.ride_detail.CustomMapView
                     android:id="@+id/map_view"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
