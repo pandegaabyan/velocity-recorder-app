@@ -8,10 +8,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -34,6 +33,7 @@ class RideDetailActivity : AppCompatActivity() {
     private lateinit var lineChartView: LineChartView
 
     private var googleMap: GoogleMap? = null
+    private var mapDefaultCamera: CameraUpdate? = null
 
     private var rideId: Long = -1L
     private var startText: String = ""
@@ -90,8 +90,10 @@ class RideDetailActivity : AppCompatActivity() {
         viewBinding.updateLocalityIcon.setOnClickListener {
             updateLocality()
         }
+        viewBinding.mapFitButton.setOnClickListener {
+            fitMapCamera()
+        }
         viewBinding.mapTypeButton.setOnClickListener {
-            isMapHybrid = !isMapHybrid
             setMapType()
         }
 
@@ -180,18 +182,18 @@ class RideDetailActivity : AppCompatActivity() {
 
     private fun handleMapOperations(rideMapData: RideMapData) {
         googleMap?.clear()
-        plotRoute(rideMapData.getMapPolyLineOptionList())
-        plotMarkers(
+        googleMap?.uiSettings?.isZoomControlsEnabled = true
+        googleMap?.uiSettings?.setAllGesturesEnabled(false)
+
+        plotMapRoute(rideMapData.getMapPolyLineOptionList())
+        plotMapMarkers(
             rideMapData.getStartPointMarker(),
             rideMapData.getEndPointMarker(),
             rideMapData.getMaxVelocityPointMarker()
         )
-        moveGoogleMap(
-            rideMapData.getLatLngBounds(),
-            rideMapData.getLatLngToZoom(),
-            rideMapData.getHeading()
-        )
         setMapType()
+        setMapDefaultCamera(rideMapData.getLatLngBounds())
+        fitMapCamera()
     }
 
     private fun setMapType() {
@@ -200,9 +202,10 @@ class RideDetailActivity : AppCompatActivity() {
         } else {
             googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
         }
+        isMapHybrid = !isMapHybrid
     }
 
-    private fun plotMarkers(
+    private fun plotMapMarkers(
         startPointMarkerOptions: MarkerOptions?,
         endPointMarkerOptions: MarkerOptions?,
         maxVelocityMarkerOptions: MarkerOptions?
@@ -218,7 +221,7 @@ class RideDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun plotRoute(polylineOptionsList: List<PolylineOptions>) {
+    private fun plotMapRoute(polylineOptionsList: List<PolylineOptions>) {
         try {
             for (polylineOptions in polylineOptionsList) {
                 googleMap?.addPolyline(polylineOptions)
@@ -228,26 +231,17 @@ class RideDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun moveGoogleMap(latLngBounds: LatLngBounds?, latLngToZoom: LatLng?, heading: Double) {
-        try {
-            latLngBounds?.let {
-                val cameraUpdate =
-                    CameraUpdateFactory.newLatLngBounds(latLngBounds, 180)
-                googleMap?.moveCamera(cameraUpdate)
-            } ?: let {
-                latLngToZoom?.let {
-                    val cameraUpdateFactory = CameraUpdateFactory.newLatLngZoom(latLngToZoom, 16f)
-                    googleMap?.moveCamera(cameraUpdateFactory)
-                }
-            }
-            googleMap?.cameraPosition?.let {
-                val cameraPosition =
-                    CameraPosition.builder(it)
-                        .bearing(heading.toFloat()).build()
-                googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-            }
-        } catch (e: Exception) {
-            Log.d("AppLog", "failed to move map camera, ${e}: ${e.stackTrace}")
+    private fun setMapDefaultCamera(latLngBounds: LatLngBounds?) {
+        latLngBounds?.let {
+            mapDefaultCamera =
+                CameraUpdateFactory.newLatLngBounds(latLngBounds, 250)
+        }
+    }
+
+    private fun fitMapCamera() {
+        val mapCamera = mapDefaultCamera
+        if (mapCamera != null) {
+            googleMap?.moveCamera(mapCamera)
         }
     }
 

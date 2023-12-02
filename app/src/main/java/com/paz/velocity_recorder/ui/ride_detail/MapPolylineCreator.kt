@@ -21,8 +21,6 @@ package com.paz.velocity_recorder.ui.ride_detail
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.RoundCap
-import com.paz.velocity_recorder.R
 import com.paz.velocity_recorder.ui_model.VelocityNextItemData
 import com.paz.velocity_recorder.ui_model.VelocitySimpleItemData
 import com.paz.velocity_recorder.utils.ParallelUtils
@@ -53,9 +51,7 @@ class MapPolylineCreator {
 
         ParallelUtils.forEach(velocitiesWithNext) {
             val polylineOptions = PolylineOptions()
-            polylineOptions.width(15f)
-            polylineOptions.startCap(RoundCap())
-            polylineOptions.endCap(RoundCap())
+            polylineOptions.width(10f)
             polylineOptions.add(LatLng(it.latitude, it.longitude))
             if (it.nextLatitude != null && it.nextLongitude != null) {
                 polylineOptions.add(
@@ -76,21 +72,21 @@ class MapPolylineCreator {
 
     private fun getColorBasedOnVelocity(
         maxVelocity: Double,
-        velocityInMetrePerSecond: Double
+        velocity: Double
     ): Int {
         val percentage =
-            if (maxVelocity > 0) (velocityInMetrePerSecond / maxVelocity) * 100 else 100.0
+            if (maxVelocity > 0) (velocity / maxVelocity) * 100 else 100.0
         return when {
             percentage < 33 -> {
-                R.color.polyline_low
+                0xffc196fe.toInt()
             }
 
-            percentage < 66 -> {
-                R.color.polyline_medium
+            percentage < 67 -> {
+                0xff9d58fe.toInt()
             }
 
             else -> {
-                R.color.polyline_high
+                0xff6a00ff.toInt()
             }
         }
     }

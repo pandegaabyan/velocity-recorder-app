@@ -5,20 +5,28 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.paz.velocity_recorder.utils.ClockUtils
 import com.paz.velocity_recorder.utils.ConversionUtils
-import com.paz.velocity_recorder.utils.SphericalUtils
+import java.util.concurrent.TimeUnit
 
 data class RideMapData(
     private val velocityDataList: List<VelocitySimpleItemData>,
     private val polylineOptionList: List<PolylineOptions>
 ) {
+    fun getRelativeTime(timestamp: Long): String {
+        val firstTimestamp = velocityDataList.firstOrNull()?.timestamp ?: 0
+        return ClockUtils.getTime(
+            TimeUnit.MILLISECONDS.toSeconds(timestamp - firstTimestamp)
+        )
+    }
 
     fun getStartPointMarker(): MarkerOptions? {
         return velocityDataList.firstOrNull()?.let {
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(201f))
-                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(240f))
+                .title("00:00")
+                .snippet("Start of Ride")
         }
     }
 
@@ -26,8 +34,9 @@ data class RideMapData(
         return velocityDataList.lastOrNull()?.let {
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(17f))
-                .title("End")
+                .icon(BitmapDescriptorFactory.defaultMarker(290f))
+                .title(getRelativeTime(it.timestamp))
+                .snippet("End of Ride")
         }
     }
 
@@ -35,11 +44,11 @@ data class RideMapData(
         return velocityDataList.maxByOrNull {
             it.velocity
         }?.let {
-            val maxVelocityString = "Max velocity: ${ConversionUtils.getVelocityKmHr(it.velocity)}"
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(49f))
-                .title(maxVelocityString)
+                .icon(BitmapDescriptorFactory.defaultMarker(265f))
+                .title(getRelativeTime(it.timestamp))
+                .snippet("Max: ${ConversionUtils.getVelocityKmHr(it.velocity)}")
         }
     }
 
@@ -55,29 +64,6 @@ data class RideMapData(
 
         return null
     }
-
-    fun getLatLngToZoom(): LatLng? {
-        val startEntity = velocityDataList.firstOrNull()
-        if (startEntity != null) {
-            return LatLng(startEntity.latitude, startEntity.longitude)
-        }
-
-        return null
-    }
-
-    fun getHeading(): Double {
-        val startEntity = velocityDataList.firstOrNull()
-        val endEntity = velocityDataList.lastOrNull()
-        if (startEntity != null && endEntity != null) {
-            return SphericalUtils.computeHeading(
-                LatLng(startEntity.latitude, startEntity.longitude),
-                LatLng(endEntity.latitude, endEntity.longitude)
-            ) - 30
-        }
-
-        return 0.0
-    }
-
 
     fun getMapPolyLineOptionList(): List<PolylineOptions> = polylineOptionList
 

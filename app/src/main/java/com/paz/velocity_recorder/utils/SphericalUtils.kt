@@ -55,47 +55,4 @@ object SphericalUtils {
     fun computeDistanceBetween(from: LatLng, to: LatLng): Double {
         return computeAngleBetween(from, to) * EARTH_RADIUS
     }
-
-    /**
-     * Wraps the given value into the inclusive-exclusive interval between min and max.
-     *
-     * @param n   The value to wrap.
-     * @param min The minimum.
-     * @param max The maximum.
-     */
-    fun wrap(n: Double, min: Double, max: Double): Double {
-        return if (n >= min && n < max) n else mod(n - min, max - min) + min
-    }
-
-    /**
-     * Returns the non-negative remainder of x / m.
-     *
-     * @param x The operand.
-     * @param m The modulus.
-     */
-    fun mod(x: Double, m: Double): Double {
-        return (x % m + m) % m
-    }
-
-    /**
-     * Returns the heading from one LatLng to another LatLng. Headings are
-     * expressed in degrees clockwise from North within the range [-180,180).
-     *
-     * @return The heading in degrees clockwise from north.
-     */
-    fun computeHeading(from: LatLng, to: LatLng): Double {
-        // http://williams.best.vwh.net/avform.htm#Crs
-        val fromLat = Math.toRadians(from.latitude)
-        val fromLng = Math.toRadians(from.longitude)
-        val toLat = Math.toRadians(to.latitude)
-        val toLng = Math.toRadians(to.longitude)
-        val dLng = toLng - fromLng
-        val heading = Math.atan2(
-            Math.sin(dLng) * Math.cos(toLat),
-            Math.cos(fromLat) * Math.sin(toLat) - Math.sin(fromLat) * Math.cos(toLat) * Math.cos(
-                dLng
-            )
-        )
-        return wrap(Math.toDegrees(heading), -180.0, 180.0)
-    }
 }
