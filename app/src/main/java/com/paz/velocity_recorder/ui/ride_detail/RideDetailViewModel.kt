@@ -19,8 +19,6 @@ class RideDetailViewModel(
     private val dataDao: DataDao
 ) : ViewModel() {
 
-    val mapPolylineCreator = MapPolylineCreator()
-
     @Synchronized
     fun getLiveVelocities(rideId: Long): LiveData<List<Entry>> {
         return dataDao.getLiveVelocities(rideId).map { velocityList ->
@@ -43,19 +41,15 @@ class RideDetailViewModel(
     fun getLiveRideMapData(rideId: Long): LiveData<RideMapData> {
         return dataDao.getLiveVelocities(rideId).switchMap { velocityList ->
             liveData {
-                val velocityDataList = velocityList.map { velocityEntity ->
-                    VelocitySimpleItemData(
-                        timestamp = velocityEntity.timestamp,
-                        velocity = velocityEntity.velocity,
-                        latitude = velocityEntity.latitude,
-                        longitude = velocityEntity.longitude
-                    )
-                }
                 val rideMapData = RideMapData(
-                    velocityDataList = velocityDataList,
-                    polylineOptionList = mapPolylineCreator.createPolylineOptions(
-                        velocityDataList
-                    )
+                    velocityDataList = velocityList.map { velocityEntity ->
+                        VelocitySimpleItemData(
+                            timestamp = velocityEntity.timestamp,
+                            velocity = velocityEntity.velocity,
+                            latitude = velocityEntity.latitude,
+                            longitude = velocityEntity.longitude
+                        )
+                    }
                 )
 
                 emit(rideMapData)

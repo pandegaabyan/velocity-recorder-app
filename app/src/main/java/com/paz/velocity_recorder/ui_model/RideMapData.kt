@@ -10,8 +10,7 @@ import com.paz.velocity_recorder.utils.ConversionUtils
 import java.util.concurrent.TimeUnit
 
 data class RideMapData(
-    private val velocityDataList: List<VelocitySimpleItemData>,
-    private val polylineOptionList: List<PolylineOptions>
+    private val velocityDataList: List<VelocitySimpleItemData>
 ) {
     fun getRelativeTime(timestamp: Long): String {
         val firstTimestamp = velocityDataList.firstOrNull()?.timestamp ?: 0
@@ -65,12 +64,67 @@ data class RideMapData(
         return null
     }
 
-    fun getMapPolyLineOptionList(): List<PolylineOptions> = polylineOptionList
+    fun getMapPolylineOptionList(): List<PolylineOptions> {
+        val maxVelocity = velocityDataList.maxByOrNull { p -> p.velocity }?.velocity ?: 0.0
+
+        val polylineOptionList = mutableListOf<PolylineOptions>()
+
+        val velocitiesWithNext = velocityDataList.mapIndexed { index, entity ->
+            VelocityNextItemData(
+                timestamp = entity.timestamp,
+                velocity = entity.velocity,
+                latitude = entity.latitude,
+                longitude = entity.longitude,
+                nextLatitude = velocityDataList.getOrNull(index + 1)?.latitude,
+                nextLongitude = velocityDataList.getOrNull(index + 1)?.longitude,
+            )
+        }
+
+        velocitiesWithNext.forEach {
+            val polylineOptions = PolylineOptions()
+            polylineOptions.width(10f)
+            polylineOptions.add(LatLng(it.latitude, it.longitude))
+            if (it.nextLatitude != null && it.nextLongitude != null) {
+                polylineOptions.add(
+                    LatLng(
+                        it.nextLatitude,
+                        it.nextLongitude
+                    )
+                )
+            }
+
+            polylineOptions.geodesic(false)
+            polylineOptions.color(getColorBasedOnVelocity(maxVelocity, it.velocity))
+            polylineOptionList.add(polylineOptions)
+        }
+
+        return polylineOptionList
+    }
+
+    private fun getColorBasedOnVelocity(
+        maxVelocity: Double,
+        velocity: Double
+    ): Int {
+        val percentage =
+            if (maxVelocity > 0) (velocity / maxVelocity) * 100 else 100.0
+        return when {
+            percentage < 33 -> {
+                0xffc196fe.toInt()
+            }
+
+            percentage < 67 -> {
+                0xff9d58fe.toInt()
+            }
+
+            else -> {
+                0xff6a00ff.toInt()
+            }
+        }
+    }
 
     companion object {
         fun empty(): RideMapData = RideMapData(
-            velocityDataList = emptyList(),
-            polylineOptionList = emptyList()
+            velocityDataList = emptyList()
         )
     }
 }

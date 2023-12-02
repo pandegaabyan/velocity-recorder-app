@@ -116,8 +116,8 @@ class RideDetailActivity : AppCompatActivity() {
                 MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style_normal)
             )
             viewModel.getLiveRideMapData(rideId).observeOnce(this) {
-                viewBinding.loadingMapLayout.visibility = View.GONE
                 handleMapOperations(it)
+                viewBinding.loadingMapLayout.visibility = View.GONE
             }
         }
     }
@@ -185,7 +185,7 @@ class RideDetailActivity : AppCompatActivity() {
         googleMap?.uiSettings?.isZoomControlsEnabled = true
         googleMap?.uiSettings?.setAllGesturesEnabled(false)
 
-        plotMapRoute(rideMapData.getMapPolyLineOptionList())
+        plotMapRoute(rideMapData.getMapPolylineOptionList())
         plotMapMarkers(
             rideMapData.getStartPointMarker(),
             rideMapData.getEndPointMarker(),

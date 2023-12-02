@@ -32,7 +32,6 @@
         </activity>
         <activity
             android:name=".ui.ride_detail.RideDetailActivity"
-            android:hardwareAccelerated="true"
             android:label="Ride Detail"
             android:screenOrientation="portrait" />
         <activity
