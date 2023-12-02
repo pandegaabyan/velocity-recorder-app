@@ -13,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.paz.velocity_recorder.R
@@ -34,6 +35,7 @@ class RideDetailActivity : AppCompatActivity() {
 
     private var googleMap: GoogleMap? = null
     private var mapDefaultCamera: CameraUpdate? = null
+    private var mapActiveMarker: Marker? = null
 
     private var rideId: Long = -1L
     private var startText: String = ""
@@ -185,7 +187,7 @@ class RideDetailActivity : AppCompatActivity() {
         googleMap?.uiSettings?.isZoomControlsEnabled = true
         googleMap?.uiSettings?.setAllGesturesEnabled(false)
 
-        plotMapRoute(rideMapData.getMapPolylineOptionList())
+        plotMapRoute(rideMapData.getMapPolylineList())
         plotMapMarkers(
             rideMapData.getStartPointMarker(),
             rideMapData.getEndPointMarker(),
@@ -194,6 +196,7 @@ class RideDetailActivity : AppCompatActivity() {
         setMapType()
         setMapDefaultCamera(rideMapData.getLatLngBounds())
         fitMapCamera()
+        setMapListener()
     }
 
     private fun setMapType() {
@@ -221,10 +224,14 @@ class RideDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun plotMapRoute(polylineOptionsList: List<PolylineOptions>) {
+    private fun plotMapRoute(polylineList: List<Pair<PolylineOptions, MarkerOptions>>) {
         try {
-            for (polylineOptions in polylineOptionsList) {
-                googleMap?.addPolyline(polylineOptions)
+            polylineList.forEach { pair ->
+                val marker = googleMap?.addMarker(pair.second)
+                marker?.isVisible = false
+                val polyline = googleMap?.addPolyline(pair.first)
+                polyline?.isClickable = true
+                polyline?.tag = marker
             }
         } catch (e: Exception) {
             Log.d("AppLog", "failed to plot route in map, ${e}: ${e.stackTrace}")
@@ -242,6 +249,20 @@ class RideDetailActivity : AppCompatActivity() {
         val mapCamera = mapDefaultCamera
         if (mapCamera != null) {
             googleMap?.moveCamera(mapCamera)
+        }
+    }
+
+    private fun setMapListener() {
+        googleMap?.setOnMarkerClickListener(fun(marker): Boolean {
+            mapActiveMarker?.isVisible = false
+            marker.showInfoWindow()
+            return true
+        })
+        googleMap?.setOnPolylineClickListener {
+            mapActiveMarker?.isVisible = false
+            mapActiveMarker = it.tag as? Marker
+            mapActiveMarker?.isVisible = true
+            mapActiveMarker?.showInfoWindow()
         }
     }
 

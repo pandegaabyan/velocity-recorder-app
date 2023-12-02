@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
 data class RideMapData(
     private val velocityDataList: List<VelocitySimpleItemData>
 ) {
+
     fun getRelativeTime(timestamp: Long): String {
         val firstTimestamp = velocityDataList.firstOrNull()?.timestamp ?: 0
         return ClockUtils.getTime(
@@ -64,10 +65,10 @@ data class RideMapData(
         return null
     }
 
-    fun getMapPolylineOptionList(): List<PolylineOptions> {
+    fun getMapPolylineList(): List<Pair<PolylineOptions, MarkerOptions>> {
         val maxVelocity = velocityDataList.maxByOrNull { p -> p.velocity }?.velocity ?: 0.0
 
-        val polylineOptionList = mutableListOf<PolylineOptions>()
+        val polylineList = mutableListOf<Pair<PolylineOptions, MarkerOptions>>()
 
         val velocitiesWithNext = velocityDataList.mapIndexed { index, entity ->
             VelocityNextItemData(
@@ -92,13 +93,19 @@ data class RideMapData(
                     )
                 )
             }
-
             polylineOptions.geodesic(false)
             polylineOptions.color(getColorBasedOnVelocity(maxVelocity, it.velocity))
-            polylineOptionList.add(polylineOptions)
+
+            val markerOptions = MarkerOptions()
+                .position(LatLng(it.latitude, it.longitude))
+                .icon(BitmapDescriptorFactory.defaultMarker(265f))
+                .title(getRelativeTime(it.timestamp))
+                .snippet(ConversionUtils.getVelocityKmHr(it.velocity))
+
+            polylineList.add(Pair(polylineOptions, markerOptions))
         }
 
-        return polylineOptionList
+        return polylineList
     }
 
     private fun getColorBasedOnVelocity(
