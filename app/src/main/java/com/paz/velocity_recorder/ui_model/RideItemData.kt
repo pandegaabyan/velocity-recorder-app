@@ -25,6 +25,14 @@ data class RideItemData(
         return startLocality == null || endLocality == null
     }
 
+    fun getStartTime(): Long {
+        return startTime
+    }
+
+    fun getEndTime(): Long {
+        return endTime
+    }
+
     fun getStartText(): String {
         if (startLocality != null && endLocality != null) {
             return startLocality

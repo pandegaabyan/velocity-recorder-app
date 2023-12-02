@@ -67,6 +67,8 @@ class HistoryFragment : Fragment() {
             requireActivity(),
             rideItemData.getRideId(),
             rideItemData.isLocalityNull(),
+            rideItemData.getStartTime(),
+            rideItemData.getEndTime(),
             rideItemData.getStartText(),
             rideItemData.getEndText(),
             rideItemData.getTotalTime(),

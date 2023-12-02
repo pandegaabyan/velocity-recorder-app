@@ -1,5 +1,6 @@
 package com.paz.velocity_recorder.ui.ride_detail
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.paz.velocity_recorder.databinding.ActivityRideDetailBinding
 import com.paz.velocity_recorder.db.AppDatabase
 import com.paz.velocity_recorder.ui.chart.LineChartView
 import com.paz.velocity_recorder.ui_model.RideMapData
+import com.paz.velocity_recorder.utils.ClockUtils
 import com.paz.velocity_recorder.utils.ConversionUtils
 import com.paz.velocity_recorder.utils.DialogUtils
 import com.paz.velocity_recorder.utils.observeOnce
@@ -49,6 +51,7 @@ class RideDetailActivity : AppCompatActivity() {
         RideDetailViewModel.Factory(dataDao)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,12 +62,22 @@ class RideDetailActivity : AppCompatActivity() {
 
         rideId = intent.getLongExtra("ride_id", -1L)
 
-        if (!intent.getBooleanExtra("is_locality_null", false)) {
-            viewBinding.updateLocalityIcon.visibility = View.GONE
+        val startTime = intent.getLongExtra("start_time", -1)
+        val endTime = intent.getLongExtra("end_time", -1)
+        if (startTime != -1L && endTime != -1L) {
+            viewBinding.startTime.text = "(${ClockUtils.convertLongToString(startTime)})"
+            viewBinding.endTime.text = "(${ClockUtils.convertLongToString(endTime)})"
         }
 
+        if (!intent.getBooleanExtra("is_locality_null", false)) {
+            viewBinding.updateLocalityIcon.visibility = View.GONE
+            viewBinding.startTime.visibility = View.VISIBLE
+            viewBinding.endTime.visibility = View.VISIBLE
+        }
+
+        val maxVelocityNumber = intent.getDoubleExtra("max_velocity_number", 0.0)
+
         // set ride data ui based on selected item in history
-        var maxVelocityNumber = 0.0
         try {
             startText = intent.getStringExtra("start_text")!!
             endText = intent.getStringExtra("end_text")!!
@@ -74,8 +87,6 @@ class RideDetailActivity : AppCompatActivity() {
             viewBinding.distanceValue.text = intent.getStringExtra("distance_value")!!
             viewBinding.avgVelocityValue.text = intent.getStringExtra("avg_velocity_value")!!
             viewBinding.maxVelocityValue.text = intent.getStringExtra("max_velocity_value")!!
-
-            maxVelocityNumber = intent.getDoubleExtra("max_velocity_number", 0.0)
         } catch (e: NullPointerException) {
             Log.d("AppLog", "failed to get ride data, NullPointerException: ${e.stackTrace}")
         }
@@ -175,6 +186,8 @@ class RideDetailActivity : AppCompatActivity() {
                 viewBinding.loadingSign.visibility = View.GONE
                 viewBinding.startText.text = startLocality
                 viewBinding.endText.text = endLocality
+                viewBinding.startTime.visibility = View.VISIBLE
+                viewBinding.endTime.visibility = View.VISIBLE
             } else {
                 viewBinding.updateLocalityIcon.visibility = View.VISIBLE
                 viewBinding.loadingSign.visibility = View.GONE
@@ -297,6 +310,8 @@ class RideDetailActivity : AppCompatActivity() {
             context: Context,
             rideId: Long,
             isLocalityNull: Boolean,
+            startTime: Long,
+            endTime: Long,
             startText: String,
             endText: String,
             timeValue: String,
@@ -308,6 +323,8 @@ class RideDetailActivity : AppCompatActivity() {
             val intent = Intent(context, RideDetailActivity::class.java).also {
                 it.putExtra("ride_id", rideId)
                 it.putExtra("is_locality_null", isLocalityNull)
+                it.putExtra("start_time", startTime)
+                it.putExtra("end_time", endTime)
                 it.putExtra("start_text", startText)
                 it.putExtra("end_text", endText)
                 it.putExtra("time_value", timeValue)
