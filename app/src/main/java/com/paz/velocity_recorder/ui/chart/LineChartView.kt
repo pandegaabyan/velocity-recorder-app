@@ -7,6 +7,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.paz.velocity_recorder.R
+import com.paz.velocity_recorder.utils.ClockUtils
+import java.util.concurrent.TimeUnit
 
 class LineChartView(
     private val lineChart: LineChart
@@ -19,10 +21,7 @@ class LineChartView(
             labelCount = 5
             valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    val seconds = value / 1000
-                    val minutes = seconds / 60
-                    val remainingSeconds = seconds % 60
-                    return "%02d:%02d".format(minutes.toInt(), remainingSeconds.toInt())
+                    return ClockUtils.getTime(TimeUnit.MILLISECONDS.toSeconds(value.toLong()))
                 }
             }
             textColor = R.color.purple_500
