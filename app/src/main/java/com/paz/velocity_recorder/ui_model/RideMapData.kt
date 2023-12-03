@@ -86,9 +86,8 @@ data class RideMapData(
             val velocityColor = getColorBasedOnVelocity(maxVelocity, it.velocity)
 
             val polylineOptions = PolylineOptions()
-            polylineOptions.width(10f)
+            polylineOptions.width(16f)
             polylineOptions.startCap(RoundCap())
-            polylineOptions.endCap(RoundCap())
             polylineOptions.add(LatLng(it.latitude, it.longitude))
             if (it.nextLatitude != null && it.nextLongitude != null) {
                 polylineOptions.add(
