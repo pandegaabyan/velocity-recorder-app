@@ -50,7 +50,8 @@ class HistoryFragment : Fragment() {
             requireActivity(),
             rideItemData.getRideId(),
             rideItemData.getStartText(),
-            rideItemData.getEndText()
+            rideItemData.getEndText(),
+            rideItemData.isLocalityNull()
         )
     }
 

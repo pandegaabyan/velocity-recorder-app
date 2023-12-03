@@ -40,9 +40,14 @@ class ExportDataActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        startText = intent.getStringExtra("start_text") ?: "start"
+        endText = intent.getStringExtra("end_text") ?: "end"
+        if (intent.getBooleanExtra("is_locality_null", false)) {
+            startText = fixTimeForFilename(startText)
+            endText = fixTimeForFilename(endText)
+        }
+
         rideId = intent.getLongExtra("ride_id", -1L)
-        startText = fixTimeForFilename(intent.getStringExtra("start_text"), "start")
-        endText = fixTimeForFilename(intent.getStringExtra("end_text"), "end")
 
         if (rideId != -1L) {
             createFile()
@@ -51,10 +56,7 @@ class ExportDataActivity : AppCompatActivity() {
         }
     }
 
-    private fun fixTimeForFilename(timeText: String?, defaultText: String): String {
-        if (timeText == null) {
-            return defaultText
-        }
+    private fun fixTimeForFilename(timeText: String): String {
         return timeText
             .replace("/", "-")
             .replace(":", "-")
@@ -103,12 +105,14 @@ class ExportDataActivity : AppCompatActivity() {
             context: Context,
             rideId: Long,
             startText: String,
-            endText: String
+            endText: String,
+            isLocalityNull: Boolean
         ) {
             val intent = Intent(context, ExportDataActivity::class.java).also {
                 it.putExtra("ride_id", rideId)
                 it.putExtra("start_text", startText)
                 it.putExtra("end_text", endText)
+                it.putExtra("is_locality_null", isLocalityNull)
             }
             context.startActivity(intent)
         }

@@ -31,6 +31,7 @@ class RideDetailActivity : AppCompatActivity() {
     private var rideId: Long = -1L
     private var startText: String = ""
     private var endText: String = ""
+    private var isLocalityNull = false
 
     private val dataDao by lazy { AppDatabase.getDatabase(this).dataDao() }
     private val localityCollector by lazy { LocalityInfoCollector(this) }
@@ -49,6 +50,7 @@ class RideDetailActivity : AppCompatActivity() {
         viewBinding.mapView.onCreate(savedInstanceState)
 
         rideId = intent.getLongExtra("ride_id", -1L)
+        isLocalityNull = intent.getBooleanExtra("is_locality_null", false)
 
         val startTime = intent.getLongExtra("start_time", -1)
         val endTime = intent.getLongExtra("end_time", -1)
@@ -57,7 +59,7 @@ class RideDetailActivity : AppCompatActivity() {
             viewBinding.endTime.text = "(${ClockUtils.convertLongToString(endTime)})"
         }
 
-        if (!intent.getBooleanExtra("is_locality_null", false)) {
+        if (!isLocalityNull) {
             viewBinding.updateLocalityIcon.visibility = View.GONE
             viewBinding.startTime.visibility = View.VISIBLE
             viewBinding.endTime.visibility = View.VISIBLE
@@ -158,7 +160,7 @@ class RideDetailActivity : AppCompatActivity() {
     }
 
     private fun exportRide() {
-        ExportDataActivity.open(this, rideId, startText, endText)
+        ExportDataActivity.open(this, rideId, startText, endText, isLocalityNull)
     }
 
     private fun deleteRide() {
