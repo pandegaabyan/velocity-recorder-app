@@ -9,21 +9,13 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.maps.CameraUpdate
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
 import com.paz.velocity_recorder.R
 import com.paz.velocity_recorder.components.ExportDataActivity
 import com.paz.velocity_recorder.components.LocalityInfoCollector
 import com.paz.velocity_recorder.databinding.ActivityRideDetailBinding
 import com.paz.velocity_recorder.db.AppDatabase
 import com.paz.velocity_recorder.ui.chart.LineChartHandler
-import com.paz.velocity_recorder.ui_model.RideMapData
 import com.paz.velocity_recorder.utils.ClockUtils
 import com.paz.velocity_recorder.utils.ConversionUtils
 import com.paz.velocity_recorder.utils.DialogUtils
@@ -34,15 +26,11 @@ class RideDetailActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityRideDetailBinding
     private lateinit var lineChartHandler: LineChartHandler
-
-    private var googleMap: GoogleMap? = null
-    private var mapDefaultCamera: CameraUpdate? = null
-    private var mapActiveMarker: Marker? = null
+    private lateinit var googleMapHandler: GoogleMapHandler
 
     private var rideId: Long = -1L
     private var startText: String = ""
     private var endText: String = ""
-    private var isMapHybrid = false
 
     private val dataDao by lazy { AppDatabase.getDatabase(this).dataDao() }
     private val localityCollector by lazy { LocalityInfoCollector(this) }
@@ -104,10 +92,10 @@ class RideDetailActivity : AppCompatActivity() {
             updateLocality()
         }
         viewBinding.mapFitButton.setOnClickListener {
-            fitMapCamera()
+            googleMapHandler.fitMapCamera()
         }
         viewBinding.mapTypeButton.setOnClickListener {
-            setMapType()
+            googleMapHandler.setMapType()
         }
 
         lineChartHandler = LineChartHandler(viewBinding.lineChart)
@@ -124,15 +112,40 @@ class RideDetailActivity : AppCompatActivity() {
 
         viewBinding.loadingMapLayout.visibility = View.VISIBLE
         viewBinding.mapView.getMapAsync { googleMap ->
-            this.googleMap = googleMap
+            googleMapHandler = GoogleMapHandler(googleMap)
             googleMap.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style_normal)
             )
             viewModel.getLiveRideMapData(rideId).observeOnce(this) {
-                handleMapOperations(it)
+                googleMapHandler.setupMap(it)
                 viewBinding.loadingMapLayout.visibility = View.GONE
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewBinding.mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewBinding.mapView.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewBinding.mapView.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        viewBinding.mapView.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewBinding.mapView.onDestroy()
     }
 
     private fun setChartData() {
@@ -193,115 +206,6 @@ class RideDetailActivity : AppCompatActivity() {
                 viewBinding.loadingSign.visibility = View.GONE
             }
         }
-    }
-
-    private fun handleMapOperations(rideMapData: RideMapData) {
-        googleMap?.clear()
-        googleMap?.uiSettings?.isZoomControlsEnabled = true
-        googleMap?.uiSettings?.setAllGesturesEnabled(false)
-
-        plotMapRoute(rideMapData.getMapPolylineList())
-        plotMapMarkers(
-            rideMapData.getStartPointMarker(),
-            rideMapData.getEndPointMarker(),
-            rideMapData.getMaxVelocityPointMarker()
-        )
-        setMapType()
-        setMapDefaultCamera(rideMapData.getLatLngBounds())
-        fitMapCamera()
-        setMapListener()
-    }
-
-    private fun setMapType() {
-        if (isMapHybrid) {
-            googleMap?.mapType = GoogleMap.MAP_TYPE_HYBRID
-        } else {
-            googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        }
-        isMapHybrid = !isMapHybrid
-    }
-
-    private fun plotMapMarkers(
-        startPointMarkerOptions: MarkerOptions?,
-        endPointMarkerOptions: MarkerOptions?,
-        maxVelocityMarkerOptions: MarkerOptions?
-    ) {
-        if (startPointMarkerOptions != null) {
-            googleMap?.addMarker(startPointMarkerOptions)
-        }
-        if (endPointMarkerOptions != null) {
-            googleMap?.addMarker(endPointMarkerOptions)
-        }
-        if (maxVelocityMarkerOptions != null) {
-            googleMap?.addMarker(maxVelocityMarkerOptions)
-        }
-    }
-
-    private fun plotMapRoute(polylineList: List<Pair<PolylineOptions, MarkerOptions>>) {
-        try {
-            polylineList.forEach { pair ->
-                val marker = googleMap?.addMarker(pair.second)
-                marker?.isVisible = false
-                val polyline = googleMap?.addPolyline(pair.first)
-                polyline?.isClickable = true
-                polyline?.tag = marker
-            }
-        } catch (e: Exception) {
-            Log.d("AppLog", "failed to plot route in map, ${e}: ${e.stackTrace}")
-        }
-    }
-
-    private fun setMapDefaultCamera(latLngBounds: LatLngBounds?) {
-        latLngBounds?.let {
-            mapDefaultCamera =
-                CameraUpdateFactory.newLatLngBounds(latLngBounds, 250)
-        }
-    }
-
-    private fun fitMapCamera() {
-        val mapCamera = mapDefaultCamera
-        if (mapCamera != null) {
-            googleMap?.moveCamera(mapCamera)
-        }
-    }
-
-    private fun setMapListener() {
-        googleMap?.setOnMarkerClickListener(fun(marker): Boolean {
-            mapActiveMarker?.isVisible = false
-            marker.showInfoWindow()
-            return true
-        })
-        googleMap?.setOnPolylineClickListener {
-            mapActiveMarker?.isVisible = false
-            mapActiveMarker = it.tag as? Marker
-            mapActiveMarker?.isVisible = true
-            mapActiveMarker?.showInfoWindow()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewBinding.mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewBinding.mapView.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewBinding.mapView.onStop()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        viewBinding.mapView.onLowMemory()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewBinding.mapView.onDestroy()
     }
 
     companion object {
