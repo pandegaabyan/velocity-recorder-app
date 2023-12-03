@@ -5,7 +5,7 @@ This product includes codes from Topsed-Speedometer (Apache 2.0)
     * Copyright 2022 Prasanna Anbazhagan
     * https://github.com/praslnx8/Topsed-Speedometer
     * The codes are used in some files with some modifications:
-    * utils files: extensions, DialogUtils, LocationPermissionUtils, NotificationUtils, ParallelUtils
+    * utils files: extensions, DialogUtils, LocationPermissionUtils, NotificationUtils
     * components files: LocalityInfoCollector and PermissionCheckActivity
     * layout files: item_ride
 
