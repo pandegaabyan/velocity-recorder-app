@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.paz.velocity_recorder.utils.ClockUtils
 import com.paz.velocity_recorder.utils.ConversionUtils
 import java.util.concurrent.TimeUnit
@@ -24,7 +25,7 @@ data class RideMapData(
         return velocityDataList.firstOrNull()?.let {
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(240f))
+                .icon(BitmapDescriptorFactory.defaultMarker(265f))
                 .title("00:00")
                 .snippet("Start of Ride")
         }
@@ -46,7 +47,7 @@ data class RideMapData(
         }?.let {
             MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(265f))
+                .icon(BitmapDescriptorFactory.defaultMarker(200f))
                 .title(getRelativeTime(it.timestamp))
                 .snippet("Max: ${ConversionUtils.getVelocityKmHr(it.velocity)}")
         }
@@ -82,8 +83,12 @@ data class RideMapData(
         }
 
         velocitiesWithNext.forEach {
+            val velocityColor = getColorBasedOnVelocity(maxVelocity, it.velocity)
+
             val polylineOptions = PolylineOptions()
             polylineOptions.width(10f)
+            polylineOptions.startCap(RoundCap())
+            polylineOptions.endCap(RoundCap())
             polylineOptions.add(LatLng(it.latitude, it.longitude))
             if (it.nextLatitude != null && it.nextLongitude != null) {
                 polylineOptions.add(
@@ -94,11 +99,11 @@ data class RideMapData(
                 )
             }
             polylineOptions.geodesic(false)
-            polylineOptions.color(getColorBasedOnVelocity(maxVelocity, it.velocity))
+            polylineOptions.color(velocityColor.first)
 
             val markerOptions = MarkerOptions()
                 .position(LatLng(it.latitude, it.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(265f))
+                .icon(BitmapDescriptorFactory.defaultMarker(velocityColor.second))
                 .title(getRelativeTime(it.timestamp))
                 .snippet(ConversionUtils.getVelocityKmHr(it.velocity))
 
@@ -111,20 +116,20 @@ data class RideMapData(
     private fun getColorBasedOnVelocity(
         maxVelocity: Double,
         velocity: Double
-    ): Int {
+    ): Pair<Int, Float> {
         val percentage =
             if (maxVelocity > 0) (velocity / maxVelocity) * 100 else 100.0
         return when {
             percentage < 33 -> {
-                0xffc196fe.toInt()
+                Pair(0xffff2b00.toInt(), 10f)
             }
 
             percentage < 67 -> {
-                0xff9d58fe.toInt()
+                Pair(0xffffaa00.toInt(), 40f)
             }
 
             else -> {
-                0xff6a00ff.toInt()
+                Pair(0xff00aaff.toInt(), 200f)
             }
         }
     }
